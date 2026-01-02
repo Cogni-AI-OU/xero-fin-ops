@@ -208,7 +208,7 @@ __marimo__/
 
 # Xero Configuration
 xero_config.yaml
-.token.json
+.xero_token.json
 
 # Data exports
 *.csv

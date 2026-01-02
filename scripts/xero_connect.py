@@ -38,7 +38,17 @@ def load_config(config_file="xero_config.yaml"):
         )
         return None
     with open(config_file, "r") as f:
-        return yaml.safe_load(f)
+        config = yaml.safe_load(f)
+
+    # Detect Codespaces and override REDIRECT_URI if needed
+    codespace_name = os.environ.get("CODESPACE_NAME")
+    port = 8888
+    if codespace_name:
+        # Compose Codespaces URL
+        codespace_url = f"https://{codespace_name}-{port}.app.github.dev/callback"
+        print(f"Detected Codespaces environment. Using redirect URI: {codespace_url}")
+        config["REDIRECT_URI"] = codespace_url
+    return config
 
 
 def save_token(token_data, token_file=".xero_token.json"):
@@ -102,6 +112,18 @@ def start_auth_server(config):
 
             save_token(token_data)
 
+            # Shut down Flask server after success
+            def shutdown_server():
+                import time
+
+                time.sleep(1)
+                print("Authentication successful. Exiting...")
+                os._exit(0)
+
+            import threading
+
+            threading.Thread(target=shutdown_server).start()
+
             return "Authentication successful! You can close this window and return to the terminal."
 
         except Exception as e:
@@ -140,7 +162,7 @@ if __name__ == "__main__":
         else:
             auth_url = generate_auth_url(config)
             print(f"\nOpening browser to: {auth_url}")
-            print("Waiting for callback on http://localhost:8888/callback ...")
+            print(f"Waiting for callback on {config['REDIRECT_URI']} ...")
 
             # Open browser automatically
             webbrowser.open(auth_url)
