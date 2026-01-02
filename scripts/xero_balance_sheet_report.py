@@ -60,7 +60,7 @@ def main():
 
     config = load_config()
     token_data = load_token()
-    
+
     if not token_data:
         return
 
@@ -78,51 +78,51 @@ def main():
         ),
         pool_threads=1,
     )
-    
+
     @api_client.oauth2_token_getter
     def obtain_xero_oauth2_token():
         return token_data
-    
+
     # 1. Get Tenant ID
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
-    
+
     if not connections:
         print("No connections found.")
         return
-        
+
     tenant_id = connections[0].tenant_id
     print(f"Using Tenant: {connections[0].tenant_name}")
-    
+
     # 2. Get Balance Sheet Report
     accounting_api = AccountingApi(api_client)
-    
+
     print(f"Fetching Balance Sheet as of {report_date}...")
-    
+
     try:
         report = accounting_api.get_report_balance_sheet(
             tenant_id,
             date=report_date
         )
-        
+
         # The response is a ReportWithRows object
         # We need to traverse it to print nicely
-        
+
         if report.reports:
             r = report.reports[0]
             print(f"\nReport: {r.report_name}")
             print(f"Title: {r.report_titles[0] if r.report_titles else ''}")
             print(f"Date: {r.report_date}")
             print("-" * 60)
-            
+
             if not r.rows:
                 print("No rows returned in the report.")
             else:
                 print(f"Found {len(r.rows)} rows.")
-            
+
             for row in r.rows:
                 row_type_str = str(row.row_type)
-                
+
                 if row_type_str == 'RowType.HEADER':
                     # Print headers
                     cells = [c.value for c in row.cells]
@@ -145,7 +145,7 @@ def main():
                     if len(cells) >= 2:
                         print("-" * 60)
                         print(f"{cells[0]:<40} {cells[1]:>15}")
-                        
+
     except Exception as e:
         print(f"Error fetching report: {e}")
         import traceback

@@ -51,7 +51,7 @@ def main():
     current_year = date.today().year
     default_start = f"{current_year}-01-01"
     default_end = f"{current_year}-12-31"
-    
+
     parser.add_argument('--start-date', help=f'Start date (YYYY-MM-DD) (default: {default_start})', default=default_start)
     parser.add_argument('--end-date', help=f'End date (YYYY-MM-DD) (default: {default_end})', default=default_end)
     args = parser.parse_args()
@@ -65,7 +65,7 @@ def main():
 
     config = load_config()
     token_data = load_token()
-    
+
     if not token_data:
         return
 
@@ -83,52 +83,52 @@ def main():
         ),
         pool_threads=1,
     )
-    
+
     @api_client.oauth2_token_getter
     def obtain_xero_oauth2_token():
         return token_data
-    
+
     # 1. Get Tenant ID
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
-    
+
     if not connections:
         print("No connections found.")
         return
-        
+
     tenant_id = connections[0].tenant_id
     print(f"Using Tenant: {connections[0].tenant_name}")
-    
+
     # 2. Get Profit and Loss Report
     accounting_api = AccountingApi(api_client)
-    
+
     print(f"Fetching P&L from {from_date} to {to_date}...")
-    
+
     try:
         report = accounting_api.get_report_profit_and_loss(
             tenant_id,
             from_date=from_date,
             to_date=to_date
         )
-        
+
         # The response is a ReportWithRows object
         # We need to traverse it to print nicely
-        
+
         if report.reports:
             r = report.reports[0]
             print(f"\nReport: {r.report_name}")
             print(f"Title: {r.report_titles[0] if r.report_titles else ''}")
             print(f"Date: {r.report_date}")
             print("-" * 60)
-            
+
             if not r.rows:
                 print("No rows returned in the report.")
             else:
                 print(f"Found {len(r.rows)} rows.")
-            
+
             for row in r.rows:
                 row_type_str = str(row.row_type)
-                
+
                 if row_type_str == 'RowType.HEADER':
                     # Print headers
                     cells = [c.value for c in row.cells]
@@ -160,7 +160,7 @@ def main():
                     label = cells[0]
                     values = cells[1:]
                     print(f"TOTAL: {label:<33} {', '.join(values)}")
-                    
+
     except Exception as e:
         print(f"Error fetching report: {e}")
 

@@ -72,13 +72,13 @@ def load_token(token_file='.token.json'):
 def get_api_client():
     config = load_config()
     token_data = load_token()
-    
+
     oauth2_token = OAuth2Token(
         client_id=config['CLIENT_ID'],
         client_secret=config['CLIENT_SECRET']
     )
     oauth2_token.update_token(**token_data)
-    
+
     api_client = ApiClient(
         Configuration(
             debug=False,
@@ -86,24 +86,24 @@ def get_api_client():
         ),
         pool_threads=1,
     )
-    
+
     @api_client.oauth2_token_getter
     def obtain_xero_oauth2_token():
         return token_data
-        
+
     @api_client.oauth2_token_saver
     def store_xero_oauth2_token(token):
         nonlocal token_data
         token_data = token
         with open('.token.json', 'w') as f:
             json.dump(token, f, indent=4)
-            
+
     # Refresh token
     try:
         api_client.refresh_oauth2_token()
     except Exception as e:
         print(f"Warning: Token refresh failed: {e}")
-        
+
     return api_client
 
 def get_tenant_id(api_client):
@@ -118,13 +118,13 @@ def list_accounts(api_client, tenant_id, query=None):
     accounting_api = AccountingApi(api_client)
     try:
         accounts = accounting_api.get_accounts(tenant_id)
-        
+
         writer = csv.writer(sys.stdout)
         writer.writerow(["Code", "Name", "Type", "TaxType", "Description", "Status", "AccountID"])
-        
+
         # Sort by Code for better readability
         sorted_accounts = sorted(accounts.accounts, key=lambda x: x.code if x.code else "")
-        
+
         for account in sorted_accounts:
             row_data = {
                 "Code": account.code,
@@ -160,7 +160,7 @@ def list_accounts(api_client, tenant_id, query=None):
 
 def add_account(api_client, tenant_id, code, name, account_type, description=None, tax_type=None):
     accounting_api = AccountingApi(api_client)
-    
+
     try:
         # Handle case where account_type might be passed as string but needs to be Enum
         # Some versions of SDK might accept string, but this one seems strict
@@ -171,7 +171,7 @@ def add_account(api_client, tenant_id, code, name, account_type, description=Non
             if hasattr(AccountType, account_type):
                 account_type = getattr(AccountType, account_type)
             else:
-                # Fallback or error? Let's try to pass it as is if not found, 
+                # Fallback or error? Let's try to pass it as is if not found,
                 # but the error said "Can't serialize value type 'str' to explicit type 'AccountType'"
                 # So it MUST be an enum.
                 print(f"Error: Invalid Account Type '{account_type}'.")
@@ -189,7 +189,7 @@ def add_account(api_client, tenant_id, code, name, account_type, description=Non
         description=description,
         tax_type=tax_type
     )
-    
+
     try:
         result = accounting_api.create_account(tenant_id, new_account)
         print(f"Account created successfully: {result.accounts[0].name} ({result.accounts[0].code})")
@@ -200,11 +200,11 @@ def add_account(api_client, tenant_id, code, name, account_type, description=Non
 def main():
     parser = argparse.ArgumentParser(description='Manage Xero Chart of Accounts')
     subparsers = parser.add_subparsers(dest='command', help='Command to run')
-    
+
     # View command
     view_parser = subparsers.add_parser('view', help='List all accounts in CSV format')
     view_parser.add_argument('query', nargs='?', help='Filter query (e.g. "Code == \'810\'")')
-    
+
     # Add command
     add_parser = subparsers.add_parser('add', help='Add a new account')
     add_parser.add_argument('--code', required=True, help='Account Code (e.g., 810)')
@@ -212,9 +212,9 @@ def main():
     add_parser.add_argument('--type', required=True, help='Account Type (e.g., CURRLIAB, EXPENSE, REVENUE, CURRENT)')
     add_parser.add_argument('--description', help='Account Description')
     add_parser.add_argument('--tax-type', help='Tax Type (e.g., NONE, OUTPUT, INPUT)')
-    
+
     args = parser.parse_args()
-    
+
     if args.command == 'view':
         api_client = get_api_client()
         tenant_id = get_tenant_id(api_client)

@@ -59,7 +59,7 @@ def get_xero_client(config):
 
 def start_auth_server(config):
     app = Flask(__name__)
-    
+
     # Disable flask banner
     import logging
     log = logging.getLogger('werkzeug')
@@ -70,42 +70,42 @@ def start_auth_server(config):
         code = request.args.get("code")
         if not code:
             return "Error: No code provided", 400
-            
+
         # Exchange code for token
         token_url = "https://identity.xero.com/connect/token"
-        
+
         # Basic Auth header
         auth_str = f"{config['CLIENT_ID']}:{config['CLIENT_SECRET']}"
         b64_auth = base64.b64encode(auth_str.encode()).decode()
-        
+
         headers = {
             "Authorization": f"Basic {b64_auth}",
             "Content-Type": "application/x-www-form-urlencoded"
         }
-        
+
         data = {
             "grant_type": "authorization_code",
             "code": code,
             "redirect_uri": config['REDIRECT_URI']
         }
-        
+
         try:
             response = requests.post(token_url, headers=headers, data=data)
             response.raise_for_status()
             token_data = response.json()
-            
+
             save_token(token_data)
-            
+
             return "Authentication successful! You can close this window and return to the terminal."
-            
+
         except Exception as e:
             return f"Error exchanging token: {str(e)}", 500
-            
+
     return app
 
 def generate_auth_url(config):
     scope_str = config.get('SCOPE', 'offline_access accounting.transactions accounting.settings')
-    
+
     base_url = "https://login.xero.com/identity/connect/authorize"
     params = {
         "response_type": "code",
@@ -114,7 +114,7 @@ def generate_auth_url(config):
         "scope": scope_str,
         "state": "123"
     }
-    
+
     import urllib.parse
     url = f"{base_url}?{urllib.parse.urlencode(params)}"
     return url
@@ -128,10 +128,10 @@ if __name__ == "__main__":
             auth_url = generate_auth_url(config)
             print(f"\nOpening browser to: {auth_url}")
             print("Waiting for callback on http://localhost:8888/callback ...")
-            
+
             # Open browser automatically
             webbrowser.open(auth_url)
-            
+
             # Start server
             app = start_auth_server(config)
             app.run(port=8888)

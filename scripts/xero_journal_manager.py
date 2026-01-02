@@ -73,40 +73,40 @@ def load_token(token_file='.token.json'):
 def list_journals(api_client, tenant_id, query=None):
     # 2. Get Manual Journals
     accounting_api = AccountingApi(api_client)
-    
+
     all_journals = []
     page = 1
-    
+
     # print("Fetching manual journals...", file=sys.stderr)
-    
+
     while True:
         # print(f"Fetching page {page}...", file=sys.stderr)
         journals_response = accounting_api.get_manual_journals(tenant_id, page=page)
-        
+
         if not journals_response.manual_journals:
             break
-            
+
         all_journals.extend(journals_response.manual_journals)
         page += 1
-        
+
     # print(f"Found {len(all_journals)} journals.", file=sys.stderr)
-    
+
     # 3. Output to CSV
     writer = csv.writer(sys.stdout)
     # Header
     writer.writerow([
-        'JournalID', 'Date', 'Narration', 'Status', 
+        'JournalID', 'Date', 'Narration', 'Status',
         'LineID', 'AccountCode', 'Description', 'LineAmount', 'TaxType'
     ])
-    
+
     for journal in all_journals:
         # We might need to fetch details if lines are not included in the list endpoint?
         # Xero API documentation says get_manual_journals returns ManualJournals which includes JournalLines.
         # Let's verify if lines are present.
-        
+
         # If lines are missing, we might need to fetch each journal individually, but that would be slow.
         # Usually list endpoint returns lines for Manual Journals.
-        
+
         if journal.journal_lines:
             for line in journal.journal_lines:
                 row_data = {
@@ -120,7 +120,7 @@ def list_journals(api_client, tenant_id, query=None):
                     'LineAmount': line.line_amount,
                     'TaxType': line.tax_type
                 }
-                
+
                 if query:
                     try:
                         # Evaluate the query against the row data
@@ -154,7 +154,7 @@ def list_journals(api_client, tenant_id, query=None):
                 'LineAmount': 0.0,
                 'TaxType': ''
             }
-            
+
             if query:
                 try:
                     if not eval(query, {}, row_data):
@@ -172,20 +172,20 @@ def list_journals(api_client, tenant_id, query=None):
 
 def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, dry_run=False):
     accounting_api = AccountingApi(api_client)
-    
+
     try:
         # Get the journal
         print(f"Fetching journal {journal_id}...", file=sys.stderr)
         journal_response = accounting_api.get_manual_journal(tenant_id, journal_id)
-        
+
         if not journal_response.manual_journals:
             print(f"Journal {journal_id} not found.", file=sys.stderr)
             return
 
         journal = journal_response.manual_journals[0]
-        
+
         print(f"Found Journal: {journal.manual_journal_id} - {journal.narration}")
-        
+
         updated = False
         if journal.journal_lines:
             for line in journal.journal_lines:
@@ -194,7 +194,7 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
                     print(f"    -> Changing AccountCode to '{new_account}'")
                     line.account_code = new_account
                     updated = True
-        
+
         if not updated:
             print(f"No lines found with AccountCode '{find_account}'. No changes made.")
             return
@@ -208,10 +208,10 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         # We need to wrap the journal in a list for the update call
         # Note: Xero API might require specific fields or complain about read-only ones.
         # But usually passing the object back works for updates.
-        
+
         updated_journals = accounting_api.update_manual_journal(tenant_id, journal_id, manual_journals=ManualJournals(manual_journals=[journal]))
         print("Journal updated successfully.")
-        
+
     except Exception as e:
         print(f"Error updating journal: {e}", file=sys.stderr)
         sys.exit(1)
@@ -219,23 +219,23 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
 def main():
     parser = argparse.ArgumentParser(description='Manage Xero Manual Journals')
     subparsers = parser.add_subparsers(dest='command', help='Command to run')
-    
+
     # View command
     view_parser = subparsers.add_parser('view', help='List all manual journals in CSV format')
     view_parser.add_argument('query', nargs='?', help='Filter query (e.g. "AccountCode == \'810\'")')
-    
+
     # Edit command
     edit_parser = subparsers.add_parser('edit', help='Edit a manual journal')
     edit_parser.add_argument('--journal-id', required=True, help='The ID of the journal to edit')
     edit_parser.add_argument('--find-account', required=True, help='The account code to find')
     edit_parser.add_argument('--new-account', required=True, help='The new account code')
     edit_parser.add_argument('--dry-run', action='store_true', help='Simulate the edit without applying changes')
-    
+
     args = parser.parse_args()
 
     config = load_config()
     token_data = load_token()
-    
+
     if not token_data:
         return
 
@@ -253,34 +253,34 @@ def main():
         ),
         pool_threads=1,
     )
-    
+
     @api_client.oauth2_token_getter
     def obtain_xero_oauth2_token():
         return token_data
-        
+
     @api_client.oauth2_token_saver
     def store_xero_oauth2_token(token):
         nonlocal token_data
         token_data = token
         with open('.token.json', 'w') as f:
             json.dump(token, f, indent=4)
-            
+
     # Refresh token
     try:
         api_client.refresh_oauth2_token()
     except Exception as e:
         print(f"Warning: Token refresh failed: {e}", file=sys.stderr)
-    
+
     # 1. Get Tenant ID
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
-    
+
     if not connections:
         print("No connections found.")
         return
-        
+
     tenant_id = connections[0].tenant_id
-    
+
     if args.command == 'view':
         list_journals(api_client, tenant_id, args.query)
     elif args.command == 'edit':
