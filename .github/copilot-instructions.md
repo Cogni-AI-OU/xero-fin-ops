@@ -33,11 +33,11 @@ This repository contains Python CLI tools for managing Xero accounting data via 
 - When updating objects (like Manual Journals), ensure you wrap them in the correct container object (e.g., `ManualJournals(manual_journals=[journal])`).
 
 ## Project Structure
-- `xero_journal_manager.py`: View and edit manual journals.
-- `xero_coa_manager.py`: Manage Chart of Accounts.
-- `xero_pnl_report.py`: Generate Profit & Loss reports.
-- `xero_balance_sheet_report.py`: Generate Balance Sheet reports.
-- `xero_connect.py`: Authenticate and generate `.token.json`.
+- `scripts/xero_journal_manager.py`: View and edit manual journals.
+- `scripts/xero_coa_manager.py`: Manage Chart of Accounts.
+- `scripts/xero_pnl_report.py`: Generate Profit & Loss reports.
+- `scripts/xero_balance_sheet_report.py`: Generate Balance Sheet reports.
+- `scripts/xero_connect.py`: Authenticate and generate `.token.json`.
 
 ## Common Tasks
 - **Filtering**: When implementing `view` commands, allow dynamic filtering using Python syntax (e.g., `eval()` with safety checks) for flexibility.

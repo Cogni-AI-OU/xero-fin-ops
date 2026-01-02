@@ -13,25 +13,27 @@ To use these scripts, you need to create a Xero App to get your API credentials 
 
 ## Scripts
 
-### `xero_journal_manager.py`
+All executable scripts now live under the `scripts/` directory. Run them with `uv` or `python` using their full path (for example, `uv run scripts/xero_journal_manager.py --help`).
+
+### `scripts/xero_journal_manager.py`
 Manage Xero Manual Journals via the API.
 - **View**: List journals with powerful filtering (e.g., by AccountCode, Amount, Date).
 - **Edit**: Fix incorrect journal entries (e.g., reassigning Account Codes for loan repayments).
 
-### `xero_coa_manager.py`
+### `scripts/xero_coa_manager.py`
 Manage the Xero Chart of Accounts.
 - **View**: List all accounts in the ledger.
 - **Filter**: Search for specific accounts by code, name, or class.
 
-### `xero_pnl_report.py`
+### `scripts/xero_pnl_report.py`
 Generate financial reports directly from the CLI.
 - **Profit & Loss**: Fetch P&L for any custom date range.
 
-### `xero_balance_sheet_report.py`
+### `scripts/xero_balance_sheet_report.py`
 Generate Balance Sheet reports.
 - **Balance Sheet**: Fetch Balance Sheet for any specific date.
 
-### `xero_connect.py`
+### `scripts/xero_connect.py`
 Handle authentication with the Xero API.
 - **Connect**: Authenticate and generate the `.token.json` file required by other scripts.
 
