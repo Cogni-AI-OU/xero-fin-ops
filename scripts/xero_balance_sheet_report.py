@@ -39,7 +39,7 @@ def load_config(config_file="xero_config.yaml"):
         return yaml.safe_load(f)
 
 
-def load_token(token_file=".token.json"):
+def load_token(token_file=".xero_token.json"):
     if not os.path.exists(token_file):
         print("Token file not found. Please run xero_connect.py first.")
         return None

@@ -46,4 +46,4 @@ Generate Balance Sheet reports.
 
 Handle authentication with the Xero API.
 
-- **Connect**: Authenticate and generate the `.token.json` file required by other scripts.
+- **Connect**: Authenticate and generate the `.xero_token.json` file required by other scripts.

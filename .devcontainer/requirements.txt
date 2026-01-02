@@ -9,3 +9,4 @@ molecule-docker
 pipenv
 pre-commit
 requests==2.31.0
+uv

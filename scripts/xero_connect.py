@@ -11,7 +11,7 @@
 """
 Xero API Connector
 
-This script handles the OAuth2 authentication flow with Xero to generate a .token.json file.
+This script handles the OAuth2 authentication flow with Xero to generate a .xero_token.json file.
 It starts a local web server to receive the callback from Xero.
 
 Usage:
@@ -33,13 +33,15 @@ from xero_python.api_client.oauth2 import OAuth2Token
 
 def load_config(config_file="xero_config.yaml"):
     if not os.path.exists(config_file):
-        print(f"Error: Configuration file '{config_file}' not found.")
+        print(
+            f"Error: Configuration file '{config_file}' not found. Please create it based on xero_config.example.yaml."
+        )
         return None
     with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
 
-def save_token(token_data, token_file=".token.json"):
+def save_token(token_data, token_file=".xero_token.json"):
     import json
 
     with open(token_file, "w") as f:
