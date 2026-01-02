@@ -29,7 +29,8 @@ Examples:
     ./xero_coa_manager.py view "Type == 'CURRLIAB'"
 
     # Add a new liability account
-    ./xero_coa_manager.py add --code 810 --name "Crypto Loan Principal" --type CURRLIAB --description "Liability account for tracking crypto loan principal balances" --tax-type NONE
+    ./xero_coa_manager.py add --code 810 --name "Crypto Loan Principal" \
+        --type CURRLIAB --description "Liability account for tracking crypto loan principal balances" --tax-type NONE
 
     # Add a new expense account
     ./xero_coa_manager.py add --code 450 --name "Consulting Fees" --type EXPENSE
@@ -45,45 +46,43 @@ import os
 import json
 import yaml
 import signal
-
-# Handle broken pipe when piping output
-signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
 from xero_python.api_client import ApiClient
 from xero_python.api_client.configuration import Configuration
 from xero_python.api_client.oauth2 import OAuth2Token
 from xero_python.identity import IdentityApi
 from xero_python.accounting import AccountingApi, Account, AccountType
 
-def load_config(config_file='xero_config.yaml'):
+# Handle broken pipe when piping output
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+
+def load_config(config_file="xero_config.yaml"):
     if not os.path.exists(config_file):
         print(f"Config file {config_file} not found.")
         sys.exit(1)
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
-def load_token(token_file='.token.json'):
+
+def load_token(token_file=".token.json"):
     if not os.path.exists(token_file):
         print("Token file not found. Please run xero_connect.py first.")
         sys.exit(1)
-    with open(token_file, 'r') as f:
+    with open(token_file, "r") as f:
         return json.load(f)
+
 
 def get_api_client():
     config = load_config()
     token_data = load_token()
 
     oauth2_token = OAuth2Token(
-        client_id=config['CLIENT_ID'],
-        client_secret=config['CLIENT_SECRET']
+        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
     )
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
-        Configuration(
-            debug=False,
-            oauth2_token=oauth2_token
-        ),
+        Configuration(debug=False, oauth2_token=oauth2_token),
         pool_threads=1,
     )
 
@@ -95,7 +94,7 @@ def get_api_client():
     def store_xero_oauth2_token(token):
         nonlocal token_data
         token_data = token
-        with open('.token.json', 'w') as f:
+        with open(".token.json", "w") as f:
             json.dump(token, f, indent=4)
 
     # Refresh token
@@ -106,6 +105,7 @@ def get_api_client():
 
     return api_client
 
+
 def get_tenant_id(api_client):
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
@@ -114,16 +114,21 @@ def get_tenant_id(api_client):
         sys.exit(1)
     return connections[0].tenant_id
 
+
 def list_accounts(api_client, tenant_id, query=None):
     accounting_api = AccountingApi(api_client)
     try:
         accounts = accounting_api.get_accounts(tenant_id)
 
         writer = csv.writer(sys.stdout)
-        writer.writerow(["Code", "Name", "Type", "TaxType", "Description", "Status", "AccountID"])
+        writer.writerow(
+            ["Code", "Name", "Type", "TaxType", "Description", "Status", "AccountID"]
+        )
 
         # Sort by Code for better readability
-        sorted_accounts = sorted(accounts.accounts, key=lambda x: x.code if x.code else "")
+        sorted_accounts = sorted(
+            accounts.accounts, key=lambda x: x.code if x.code else ""
+        )
 
         for account in sorted_accounts:
             row_data = {
@@ -133,7 +138,7 @@ def list_accounts(api_client, tenant_id, query=None):
                 "TaxType": account.tax_type,
                 "Description": account.description,
                 "Status": account.status,
-                "AccountID": account.account_id
+                "AccountID": account.account_id,
             }
 
             if query:
@@ -142,23 +147,31 @@ def list_accounts(api_client, tenant_id, query=None):
                     if not eval(query, {}, row_data):
                         continue
                 except Exception as e:
-                    print(f"Error evaluating query '{query}' for row: {e}", file=sys.stderr)
+                    print(
+                        f"Error evaluating query '{query}' for row: {e}",
+                        file=sys.stderr,
+                    )
                     continue
 
-            writer.writerow([
-                row_data["Code"],
-                row_data["Name"],
-                row_data["Type"],
-                row_data["TaxType"],
-                row_data["Description"],
-                row_data["Status"],
-                row_data["AccountID"]
-            ])
+            writer.writerow(
+                [
+                    row_data["Code"],
+                    row_data["Name"],
+                    row_data["Type"],
+                    row_data["TaxType"],
+                    row_data["Description"],
+                    row_data["Status"],
+                    row_data["AccountID"],
+                ]
+            )
     except Exception as e:
         print(f"Error fetching accounts: {e}", file=sys.stderr)
         sys.exit(1)
 
-def add_account(api_client, tenant_id, code, name, account_type, description=None, tax_type=None):
+
+def add_account(
+    api_client, tenant_id, code, name, account_type, description=None, tax_type=None
+):
     accounting_api = AccountingApi(api_client)
 
     try:
@@ -187,44 +200,62 @@ def add_account(api_client, tenant_id, code, name, account_type, description=Non
         name=name,
         type=account_type,
         description=description,
-        tax_type=tax_type
+        tax_type=tax_type,
     )
 
     try:
         result = accounting_api.create_account(tenant_id, new_account)
-        print(f"Account created successfully: {result.accounts[0].name} ({result.accounts[0].code})")
+        print(
+            f"Account created successfully: {result.accounts[0].name} ({result.accounts[0].code})"
+        )
     except Exception as e:
         print(f"Error creating account: {e}", file=sys.stderr)
         sys.exit(1)
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Manage Xero Chart of Accounts')
-    subparsers = parser.add_subparsers(dest='command', help='Command to run')
+    parser = argparse.ArgumentParser(description="Manage Xero Chart of Accounts")
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
-    view_parser = subparsers.add_parser('view', help='List all accounts in CSV format')
-    view_parser.add_argument('query', nargs='?', help='Filter query (e.g. "Code == \'810\'")')
+    view_parser = subparsers.add_parser("view", help="List all accounts in CSV format")
+    view_parser.add_argument(
+        "query", nargs="?", help="Filter query (e.g. \"Code == '810'\")"
+    )
 
     # Add command
-    add_parser = subparsers.add_parser('add', help='Add a new account')
-    add_parser.add_argument('--code', required=True, help='Account Code (e.g., 810)')
-    add_parser.add_argument('--name', required=True, help='Account Name')
-    add_parser.add_argument('--type', required=True, help='Account Type (e.g., CURRLIAB, EXPENSE, REVENUE, CURRENT)')
-    add_parser.add_argument('--description', help='Account Description')
-    add_parser.add_argument('--tax-type', help='Tax Type (e.g., NONE, OUTPUT, INPUT)')
+    add_parser = subparsers.add_parser("add", help="Add a new account")
+    add_parser.add_argument("--code", required=True, help="Account Code (e.g., 810)")
+    add_parser.add_argument("--name", required=True, help="Account Name")
+    add_parser.add_argument(
+        "--type",
+        required=True,
+        help="Account Type (e.g., CURRLIAB, EXPENSE, REVENUE, CURRENT)",
+    )
+    add_parser.add_argument("--description", help="Account Description")
+    add_parser.add_argument("--tax-type", help="Tax Type (e.g., NONE, OUTPUT, INPUT)")
 
     args = parser.parse_args()
 
-    if args.command == 'view':
+    if args.command == "view":
         api_client = get_api_client()
         tenant_id = get_tenant_id(api_client)
         list_accounts(api_client, tenant_id, args.query)
-    elif args.command == 'add':
+    elif args.command == "add":
         api_client = get_api_client()
         tenant_id = get_tenant_id(api_client)
-        add_account(api_client, tenant_id, args.code, args.name, args.type, args.description, args.tax_type)
+        add_account(
+            api_client,
+            tenant_id,
+            args.code,
+            args.name,
+            args.type,
+            args.description,
+            args.tax_type,
+        )
     else:
         parser.print_help()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

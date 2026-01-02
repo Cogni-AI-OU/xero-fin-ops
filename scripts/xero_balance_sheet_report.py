@@ -33,27 +33,34 @@ from xero_python.api_client.oauth2 import OAuth2Token
 from xero_python.identity import IdentityApi
 from xero_python.accounting import AccountingApi
 
-def load_config(config_file='xero_config.yaml'):
-    with open(config_file, 'r') as f:
+
+def load_config(config_file="xero_config.yaml"):
+    with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
-def load_token(token_file='.token.json'):
+
+def load_token(token_file=".token.json"):
     if not os.path.exists(token_file):
         print("Token file not found. Please run xero_connect.py first.")
         return None
-    with open(token_file, 'r') as f:
+    with open(token_file, "r") as f:
         return json.load(f)
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Generate Xero Balance Sheet Report')
+    parser = argparse.ArgumentParser(description="Generate Xero Balance Sheet Report")
     # Default to end of current year if not specified
     current_year = date.today().year
     default_date = f"{current_year}-12-31"
-    parser.add_argument('--date', help=f'Report date (YYYY-MM-DD) (default: {default_date})', default=default_date)
+    parser.add_argument(
+        "--date",
+        help=f"Report date (YYYY-MM-DD) (default: {default_date})",
+        default=default_date,
+    )
     args = parser.parse_args()
 
     try:
-        report_date = datetime.strptime(args.date, '%Y-%m-%d').date()
+        report_date = datetime.strptime(args.date, "%Y-%m-%d").date()
     except ValueError:
         print("Error: Date must be in YYYY-MM-DD format")
         sys.exit(1)
@@ -66,16 +73,12 @@ def main():
 
     # Create the token object first
     oauth2_token = OAuth2Token(
-        client_id=config['CLIENT_ID'],
-        client_secret=config['CLIENT_SECRET']
+        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
     )
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
-        Configuration(
-            debug=False,
-            oauth2_token=oauth2_token
-        ),
+        Configuration(debug=False, oauth2_token=oauth2_token),
         pool_threads=1,
     )
 
@@ -100,10 +103,7 @@ def main():
     print(f"Fetching Balance Sheet as of {report_date}...")
 
     try:
-        report = accounting_api.get_report_balance_sheet(
-            tenant_id,
-            date=report_date
-        )
+        report = accounting_api.get_report_balance_sheet(tenant_id, date=report_date)
 
         # The response is a ReportWithRows object
         # We need to traverse it to print nicely
@@ -123,12 +123,12 @@ def main():
             for row in r.rows:
                 row_type_str = str(row.row_type)
 
-                if row_type_str == 'RowType.HEADER':
+                if row_type_str == "RowType.HEADER":
                     # Print headers
                     cells = [c.value for c in row.cells]
                     print(f"{' | '.join(cells)}")
                     print("-" * 60)
-                elif row_type_str == 'RowType.SECTION':
+                elif row_type_str == "RowType.SECTION":
                     print(f"\n--- {row.title} ---")
                     if row.rows:
                         for section_row in row.rows:
@@ -136,11 +136,11 @@ def main():
                             # Format: Description ........... Value
                             if len(cells) >= 2:
                                 print(f"{cells[0]:<40} {cells[1]:>15}")
-                elif row_type_str == 'RowType.ROW':
+                elif row_type_str == "RowType.ROW":
                     cells = [c.value for c in row.cells]
                     if len(cells) >= 2:
                         print(f"{cells[0]:<40} {cells[1]:>15}")
-                elif row_type_str == 'RowType.SUMMARYROW':
+                elif row_type_str == "RowType.SUMMARYROW":
                     cells = [c.value for c in row.cells]
                     if len(cells) >= 2:
                         print("-" * 60)
@@ -149,7 +149,9 @@ def main():
     except Exception as e:
         print(f"Error fetching report: {e}")
         import traceback
+
         traceback.print_exc()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -48,25 +48,26 @@ import yaml
 import csv
 import sys
 import signal
-
-# Handle broken pipe when piping output
-signal.signal(signal.SIGPIPE, signal.SIG_DFL)
-
 from xero_python.api_client import ApiClient
 from xero_python.api_client.configuration import Configuration
 from xero_python.api_client.oauth2 import OAuth2Token
 from xero_python.identity import IdentityApi
 from xero_python.accounting import AccountingApi, ManualJournals
 
-def load_config(config_file='xero_config.yaml'):
-    with open(config_file, 'r') as f:
+# Handle broken pipe when piping output
+signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+
+
+def load_config(config_file="xero_config.yaml"):
+    with open(config_file, "r") as f:
         return yaml.safe_load(f)
 
-def load_token(token_file='.token.json'):
+
+def load_token(token_file=".token.json"):
     if not os.path.exists(token_file):
         print("Token file not found. Please run xero_connect.py first.")
         return None
-    with open(token_file, 'r') as f:
+    with open(token_file, "r") as f:
         return json.load(f)
 
 
@@ -94,10 +95,19 @@ def list_journals(api_client, tenant_id, query=None):
     # 3. Output to CSV
     writer = csv.writer(sys.stdout)
     # Header
-    writer.writerow([
-        'JournalID', 'Date', 'Narration', 'Status',
-        'LineID', 'AccountCode', 'Description', 'LineAmount', 'TaxType'
-    ])
+    writer.writerow(
+        [
+            "JournalID",
+            "Date",
+            "Narration",
+            "Status",
+            "LineID",
+            "AccountCode",
+            "Description",
+            "LineAmount",
+            "TaxType",
+        ]
+    )
 
     for journal in all_journals:
         # We might need to fetch details if lines are not included in the list endpoint?
@@ -110,15 +120,15 @@ def list_journals(api_client, tenant_id, query=None):
         if journal.journal_lines:
             for line in journal.journal_lines:
                 row_data = {
-                    'JournalID': journal.manual_journal_id,
-                    'Date': str(journal.date),
-                    'Narration': journal.narration,
-                    'Status': journal.status,
-                    'LineID': getattr(line, 'line_item_id', ''),
-                    'AccountCode': line.account_code,
-                    'Description': line.description,
-                    'LineAmount': line.line_amount,
-                    'TaxType': line.tax_type
+                    "JournalID": journal.manual_journal_id,
+                    "Date": str(journal.date),
+                    "Narration": journal.narration,
+                    "Status": journal.status,
+                    "LineID": getattr(line, "line_item_id", ""),
+                    "AccountCode": line.account_code,
+                    "Description": line.description,
+                    "LineAmount": line.line_amount,
+                    "TaxType": line.tax_type,
                 }
 
                 if query:
@@ -127,32 +137,37 @@ def list_journals(api_client, tenant_id, query=None):
                         if not eval(query, {}, row_data):
                             continue
                     except Exception as e:
-                        print(f"Error evaluating query '{query}' for row: {e}", file=sys.stderr)
+                        print(
+                            f"Error evaluating query '{query}' for row: {e}",
+                            file=sys.stderr,
+                        )
                         continue
 
-                writer.writerow([
-                    row_data['JournalID'],
-                    row_data['Date'],
-                    row_data['Narration'],
-                    row_data['Status'],
-                    row_data['LineID'],
-                    row_data['AccountCode'],
-                    row_data['Description'],
-                    row_data['LineAmount'],
-                    row_data['TaxType']
-                ])
+                writer.writerow(
+                    [
+                        row_data["JournalID"],
+                        row_data["Date"],
+                        row_data["Narration"],
+                        row_data["Status"],
+                        row_data["LineID"],
+                        row_data["AccountCode"],
+                        row_data["Description"],
+                        row_data["LineAmount"],
+                        row_data["TaxType"],
+                    ]
+                )
         else:
             # Just write the journal info if no lines (shouldn't happen for valid journals)
             row_data = {
-                'JournalID': journal.manual_journal_id,
-                'Date': str(journal.date),
-                'Narration': journal.narration,
-                'Status': journal.status,
-                'LineID': '',
-                'AccountCode': '',
-                'Description': '',
-                'LineAmount': 0.0,
-                'TaxType': ''
+                "JournalID": journal.manual_journal_id,
+                "Date": str(journal.date),
+                "Narration": journal.narration,
+                "Status": journal.status,
+                "LineID": "",
+                "AccountCode": "",
+                "Description": "",
+                "LineAmount": 0.0,
+                "TaxType": "",
             }
 
             if query:
@@ -162,15 +177,24 @@ def list_journals(api_client, tenant_id, query=None):
                 except Exception:
                     continue
 
-            writer.writerow([
-                row_data['JournalID'],
-                row_data['Date'],
-                row_data['Narration'],
-                row_data['Status'],
-                '', '', '', '', ''
-            ])
+            writer.writerow(
+                [
+                    row_data["JournalID"],
+                    row_data["Date"],
+                    row_data["Narration"],
+                    row_data["Status"],
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                ]
+            )
 
-def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, dry_run=False):
+
+def edit_journal(
+    api_client, tenant_id, journal_id, find_account, new_account, dry_run=False
+):
     accounting_api = AccountingApi(api_client)
 
     try:
@@ -190,7 +214,9 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         if journal.journal_lines:
             for line in journal.journal_lines:
                 if line.account_code == find_account:
-                    print(f"  - Found line matching AccountCode '{find_account}': {line.description} ({line.line_amount})")
+                    print(
+                        f"  - Found line matching AccountCode '{find_account}': {line.description} ({line.line_amount})"
+                    )
                     print(f"    -> Changing AccountCode to '{new_account}'")
                     line.account_code = new_account
                     updated = True
@@ -209,27 +235,46 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         # Note: Xero API might require specific fields or complain about read-only ones.
         # But usually passing the object back works for updates.
 
-        updated_journals = accounting_api.update_manual_journal(tenant_id, journal_id, manual_journals=ManualJournals(manual_journals=[journal]))
+        accounting_api.update_manual_journal(
+            tenant_id,
+            journal_id,
+            manual_journals=ManualJournals(manual_journals=[journal]),
+        )
         print("Journal updated successfully.")
 
     except Exception as e:
         print(f"Error updating journal: {e}", file=sys.stderr)
         sys.exit(1)
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Manage Xero Manual Journals')
-    subparsers = parser.add_subparsers(dest='command', help='Command to run')
+    parser = argparse.ArgumentParser(description="Manage Xero Manual Journals")
+    subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
-    view_parser = subparsers.add_parser('view', help='List all manual journals in CSV format')
-    view_parser.add_argument('query', nargs='?', help='Filter query (e.g. "AccountCode == \'810\'")')
+    view_parser = subparsers.add_parser(
+        "view", help="List all manual journals in CSV format"
+    )
+    view_parser.add_argument(
+        "query", nargs="?", help="Filter query (e.g. \"AccountCode == '810'\")"
+    )
 
     # Edit command
-    edit_parser = subparsers.add_parser('edit', help='Edit a manual journal')
-    edit_parser.add_argument('--journal-id', required=True, help='The ID of the journal to edit')
-    edit_parser.add_argument('--find-account', required=True, help='The account code to find')
-    edit_parser.add_argument('--new-account', required=True, help='The new account code')
-    edit_parser.add_argument('--dry-run', action='store_true', help='Simulate the edit without applying changes')
+    edit_parser = subparsers.add_parser("edit", help="Edit a manual journal")
+    edit_parser.add_argument(
+        "--journal-id", required=True, help="The ID of the journal to edit"
+    )
+    edit_parser.add_argument(
+        "--find-account", required=True, help="The account code to find"
+    )
+    edit_parser.add_argument(
+        "--new-account", required=True, help="The new account code"
+    )
+    edit_parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Simulate the edit without applying changes",
+    )
 
     args = parser.parse_args()
 
@@ -241,16 +286,12 @@ def main():
 
     # Create the token object first
     oauth2_token = OAuth2Token(
-        client_id=config['CLIENT_ID'],
-        client_secret=config['CLIENT_SECRET']
+        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
     )
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
-        Configuration(
-            debug=False,
-            oauth2_token=oauth2_token
-        ),
+        Configuration(debug=False, oauth2_token=oauth2_token),
         pool_threads=1,
     )
 
@@ -262,7 +303,7 @@ def main():
     def store_xero_oauth2_token(token):
         nonlocal token_data
         token_data = token
-        with open('.token.json', 'w') as f:
+        with open(".token.json", "w") as f:
             json.dump(token, f, indent=4)
 
     # Refresh token
@@ -281,12 +322,20 @@ def main():
 
     tenant_id = connections[0].tenant_id
 
-    if args.command == 'view':
+    if args.command == "view":
         list_journals(api_client, tenant_id, args.query)
-    elif args.command == 'edit':
-        edit_journal(api_client, tenant_id, args.journal_id, args.find_account, args.new_account, args.dry_run)
+    elif args.command == "edit":
+        edit_journal(
+            api_client,
+            tenant_id,
+            args.journal_id,
+            args.find_account,
+            args.new_account,
+            args.dry_run,
+        )
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()
