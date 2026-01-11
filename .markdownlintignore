@@ -1,0 +1,12 @@
+# Markdown files to ignore for markdownlint
+# Add directories or specific files to exclude from markdown linting
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Third-party documentation
+vendor/

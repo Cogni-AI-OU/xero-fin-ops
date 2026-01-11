@@ -1,0 +1,234 @@
+# AGENTS.md
+
+Guidance for automation agents working in this repository.
+
+## Quick Start
+
+- See [README.md](README.md) for setup and installation instructions
+- For enhanced agent capabilities, see [Copilot Plus](.github/agents/copilot-plus.agent.md)
+
+## Instructions
+
+For detailed coding standards and formatting guidelines, refer to:
+
+- [Copilot Instructions](.github/copilot-instructions.md) - Main coding standards
+- [Ansible](.github/instructions/ansible.instructions.md) - Ansible conventions
+- [JSON](.github/instructions/json.instructions.md) - JSON formatting standards
+- [Markdown](.github/instructions/markdown.instructions.md) - Markdown standards
+- [YAML](.github/instructions/yaml.instructions.md) - YAML formatting standards
+
+### Specialized Agents
+
+For specific tasks, use the following specialized agent instructions:
+
+- [Code Tour Agent](.github/agents/code-tour.agent.md) - For creating/updating `.tours/` files
+- [Copilot Plus Agent](.github/agents/copilot-plus.agent.md) - Enhanced Copilot capabilities
+
+## Common Tasks
+
+### Before the changes
+
+Before each commit change:
+
+- Verify your expected changes by `git diff --no-color`.
+- Use linting and validation tools used by project to confirm your changes meet the coding standard.
+- If repo uses git hooks, run them to validate your changes.
+
+### Linting and Validation
+
+```bash
+# Run all pre-commit checks
+pre-commit run -a
+
+# Run specific checks
+pre-commit run markdownlint -a
+pre-commit run yamllint -a
+```
+
+### Understanding the task
+
+- When task is not clear, check further relevant information for better clarity.
+- If triggered by a short comment, check if parent's comment exist and consist further information.
+- If none of above helps, and task is ambiguous, comminicate to the user with potential options.
+
+### Testing
+
+```bash
+# Run Molecule tests
+molecule test
+
+# Syntax check
+molecule syntax
+```
+
+### Adding or Modifying Workflows
+
+- Workflows in `.github/workflows/` can be reused via `workflow_call`
+- Test workflow changes on a feature branch before merging to main
+- Use `actionlint` to validate workflow syntax locally
+
+### Updating Coding Standards
+
+- Language-specific instructions are in `.github/instructions/`
+- Update `.markdownlint.yaml`, `.yamllint`, or `.editorconfig` for linting rules
+- Run `pre-commit run -a` to verify changes pass all checks
+
+## Integrating Changes from Target Branch
+
+Recommended way is to use the **cherry-pick workflow** to rebase your commits
+on top of the updated target branch:
+
+1. Identify your feature commits
+2. Fetch the latest target branch
+3. Reset your branch to target (with backup)
+4. Cherry-pick your feature commits
+5. Verify only your changes remain
+
+**For detailed step-by-step instructions with commands**, see:
+[`.github/skills/git/SKILL.md` - "Integrating Changes from Target Branch"](.github/skills/git/SKILL.md#integrating-changes-from-target-branch-avoiding-merge-commits)
+
+### Key Points
+
+- **Never** use `git merge <target-branch>` for branch integration
+- **Always** create backup tags before destructive operations
+- **Always** verify with `git diff` that only your changes remain
+- **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
+
+
+### Testing Xero Scripts
+
+```bash
+# Test individual scripts
+cd scripts/
+./xero_journal_manager.py --help
+./xero_coa_manager.py --help
+./xero_pnl_report.py --help
+
+# Ensure scripts are executable
+chmod +x scripts/*.py
+```
+
+### Adding or Modifying Workflows
+
+- Workflows in `.github/workflows/` reference remote workflows via `workflow_call`
+- Test workflow changes on a feature branch before merging to main
+- Use `actionlint` to validate workflow syntax locally
+
+### Updating Coding Standards
+
+- Update `.markdownlint.yaml`, `.yamllint`, or `.editorconfig` for linting rules
+- Run `pre-commit run -a` to verify changes pass all checks
+
+## Integrating Changes from Target Branch
+
+Recommended way is to use the **cherry-pick workflow** to rebase your commits
+on top of the updated target branch:
+
+1. Identify your feature commits
+2. Fetch the latest target branch
+3. Reset your branch to target (with backup)
+4. Cherry-pick your feature commits
+5. Verify only your changes remain
+
+**For detailed step-by-step instructions with commands**, see:
+[`.github/skills/git/SKILL.md` - "Integrating Changes from Target Branch"](.github/skills/git/SKILL.md#integrating-changes-from-target-branch-avoiding-merge-commits)
+
+### Key Points
+
+- **Never** use `git merge <target-branch>` for branch integration
+- **Always** create backup tags before destructive operations
+- **Always** verify with `git diff` that only your changes remain
+- **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
+
+### Critical: Using `report_progress` Tool
+
+**CRITICAL WARNING**: The `report_progress` tool automatically rebases your branch against the remote
+tracking branch. This **WILL CRASH** the session if your local history has diverged from remote.
+
+**When Crash Occurs:**
+
+After using `git reset --hard` to rewrite history, your local branch diverges from remote. When `report_progress`
+tries to auto-rebase (e.g., 113 commits), it encounters conflicts it cannot resolve, crashing the session.
+
+**Prevention (Choose One):**
+
+1. **Use new branch name** after rewriting history: `git checkout -b <feature>-v2` (safest)
+2. **Complete git operations manually**, then ask user for manual push (never call `report_progress` after `git reset --hard`)
+
+**If Already Crashed:**
+
+1. Run `git rebase --abort`
+2. Create new branch: `git checkout -b <feature>-v2`
+3. Push new branch: `git push origin <feature>-v2`
+
+**Error Patterns:** `Rebasing (1/XXX)` with large numbers, `CONFLICT (content)`, session crash with `GitError`
+
+**For complete details**, see:
+[`.github/skills/git/SKILL.md` - "Working with Automation Tools"](.github/skills/git/SKILL.md#working-with-automation-tools)
+
+
+### Environment Setup
+
+```bash
+# Install dependencies
+pip install -r .devcontainer/requirements.txt
+
+# Install pre-commit hooks
+pre-commit install
+
+# Set up environment variables (copy from .env.example)
+cp .env.example .env
+# Edit .env with your FreeAgent OAuth credentials
+```
+
+## Configuration
+
+- **Environment Variables**: All configuration is via `FREEAGENT_*` environment variables
+- **OAuth2 Flow**: Uses authorization code flow with token refresh
+- **Output Formats**: Supports plain, csv, json, and yaml output formats
+- **Pagination**: Built-in pagination support with configurable page size
+
+## Project Structure
+
+- `.devcontainer/`: Development container configuration
+- `.github/`: GitHub workflows and instructions
+- `docs/`: How-to guides and documentation
+- `scripts/`: CLI scripts (main: `fa_cli.py`)
+- `tests/`: Test files
+- `.env.example`: Example environment configuration
+
+
+## References
+
+- Claude-specific guidance: [CLAUDE.md](CLAUDE.md)
+- Main documentation: [README.md](README.md)
+
+## Troubleshooting
+
+### GitHub Build issues
+
+- Use `gh` command to interact with GitHub resources. For example:
+
+  - `gh run list --limit 3` to list recent builds.
+  - `gh run view {ID} --log | rg -iw "failed|error|exit"` to look for build errors.
+
+### Firewall issues
+
+If you encounter firewall issues when using the GitHub Copilot Agent:
+
+- Refer to <https://gh.io/copilot/firewall-config> for configuration details.
+- If you need to allowlist additional hosts, update your firewall configuration accordingly
+  and keep the list of allowed hosts in `.github/agents/FIREWALL.md` up to date.
+
+### Linting issues
+
+If Copilot or automated checks behave unexpectedly:
+
+- Re-run `pre-commit run -a` locally to surface formatting or linting issues.
+- Verify `.markdownlint.yaml` and `.yamllint` have not been modified incorrectly.
+- If problems persist, open an issue with details of the command run and any error output.
+
+### Shell commands issues
+
+- Prefix shell commands with `time` to measure execution duration for better visibility.
+- When command takes too long, use `timeout` or similar approach to limit execution time.
