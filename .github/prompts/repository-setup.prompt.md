@@ -17,6 +17,10 @@ Follow the checklist below in order to review the current repository structure a
 files. For each item, check if the file exists, compare it with the template from `.github` repository, and
 create or update it as needed with repository-specific customizations.
 
+**IMPORTANT**: Many checklist items require updating existing files, not just creating missing ones. Pay close 
+attention to items marked "**REQUIRED**" or "Action: review and update" - these must be updated even if they 
+exist. Do not skip items just because a file already exists.
+
 ## Checklist
 
 ### Phase 1: Essential Configuration Files
@@ -206,24 +210,31 @@ create or update it as needed with repository-specific customizations.
   - Check if `.devcontainer/` directory and file exist
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/devcontainer.json`
   - Purpose: Defines containerized development environment
-  - Action: Create if missing; review and update if exists
+  - Action: **REQUIRED** - If file exists, review and update to match organization standards; create if missing
   - Key features: Python, Docker-in-Docker, actionlint, node, make, ripgrep
-  - Customize: Add language-specific features and VS Code extensions
-  - Important: Update `postCreateCommand` and `onCreateCommand` to use repository-specific requirements
+  - **Critical updates required if file exists:**
+    - Add `vsls-contrib.codetour` to VSCode extensions list (for code tours)
+    - Keep extensions in alphabetical order with comment "// Note: Keep the list in alphabetical order."
+    - Update `onCreateCommand` to use: `sudo apt update && xargs -a .devcontainer/apt-packages.txt sudo apt-get install -y`
+    - Update `postCreateCommand` to use: `time pip install -r .devcontainer/requirements.txt && time pre-commit install`
+    - Remove the `ghcr.io/prulloac/devcontainer-features/pre-commit:1` feature (pre-commit installed via pip)
+    - Ensure features are in alphabetical order
+  - Customize: Add language-specific features and VS Code extensions as needed
 
 - [ ] **`.devcontainer/requirements.txt`**
   - Check if file exists (if `.devcontainer/` exists)
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/requirements.txt`
   - Purpose: Python dependencies for devcontainer
-  - Action: Create with base requirements; merge if exists
+  - Action: **REQUIRED** - If file exists, verify it contains base packages; create with base requirements if missing
   - Base packages: ansible, ansible-lint, docker, pre-commit, uv
-  - Customize: Add project-specific Python packages
+  - Customize: Add project-specific Python packages (keep existing project packages)
 
 - [ ] **`.devcontainer/apt-packages.txt`**
   - Check if file exists (if `.devcontainer/` exists)
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/apt-packages.txt`
   - Purpose: System packages to install in devcontainer
-  - Action: Create with base packages; merge if exists
+  - Action: Create if missing (even if devcontainer.json exists)
+  - **Critical**: This file must be created because devcontainer.json references it in `onCreateCommand`
   - Base packages: coreutils, gh, git, mawk, sed, time, vim
   - Customize: Add project-specific system dependencies
 
