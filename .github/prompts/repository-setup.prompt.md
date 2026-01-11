@@ -210,22 +210,15 @@ exist. Do not skip items just because a file already exists.
   - Check if `.devcontainer/` directory and file exist
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/devcontainer.json`
   - Purpose: Defines containerized development environment
-  - Action: **REQUIRED** - If file exists, review and update to match organization standards; create if missing
+  - Action: If file exists, review and update to match organization standards; create if missing
   - Key features: Python, Docker-in-Docker, actionlint, node, make, ripgrep
-  - **Critical updates required if file exists:**
-    - Add `vsls-contrib.codetour` to VSCode extensions list (for code tours)
-    - Keep extensions in alphabetical order with comment "// Note: Keep the list in alphabetical order."
-    - Update `onCreateCommand` to use: `sudo apt update && xargs -a .devcontainer/apt-packages.txt sudo apt-get install -y`
-    - Update `postCreateCommand` to use: `time pip install -r .devcontainer/requirements.txt && time pre-commit install`
-    - Remove the `ghcr.io/prulloac/devcontainer-features/pre-commit:1` feature (pre-commit installed via pip)
-    - Ensure features are in alphabetical order
   - Customize: Add language-specific features and VS Code extensions as needed
 
 - [ ] **`.devcontainer/requirements.txt`**
   - Check if file exists (if `.devcontainer/` exists)
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/requirements.txt`
   - Purpose: Python dependencies for devcontainer
-  - Action: **REQUIRED** - If file exists, verify it contains base packages; create with base requirements if missing
+  - Action: If file exists, verify it contains base packages; create with base requirements if missing
   - Base packages: ansible, ansible-lint, docker, pre-commit, uv
   - Customize: Add project-specific Python packages (keep existing project packages)
 
@@ -235,7 +228,6 @@ exist. Do not skip items just because a file already exists.
   - Purpose: System packages to install in devcontainer
   - Action: Create if missing (even if devcontainer.json exists)
   - **Critical**: This file must be created because devcontainer.json references it in `onCreateCommand`
-  - Base packages: coreutils, gh, git, mawk, sed, time, vim
   - Customize: Add project-specific system dependencies
 
 ### Phase 5: Code Tours and Documentation
