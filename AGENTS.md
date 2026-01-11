@@ -5,6 +5,7 @@ Guidance for automation agents working in this repository.
 ## Quick Start
 
 - See [README.md](README.md) for setup and installation instructions
+- See [.tours/getting-started.tour](.tours/getting-started.tour) for a guided walkthrough
 - For enhanced agent capabilities, see [Copilot Plus](.github/agents/copilot-plus.agent.md)
 
 ## Instructions
@@ -26,13 +27,11 @@ For specific tasks, use the following specialized agent instructions:
 
 ## Common Tasks
 
-### Before the changes
+### Before each commit
 
-Before each commit change:
-
-- Verify your expected changes by `git diff --no-color`.
-- Use linting and validation tools used by project to confirm your changes meet the coding standard.
-- If repo uses git hooks, run them to validate your changes.
+- Verify your expected changes with `git diff --no-color`.
+- Use the project linting/validation tools to confirm your changes meet the coding standard.
+- If the repo uses git hooks, run them to validate your changes.
 
 ### Linting and Validation
 
@@ -45,11 +44,11 @@ pre-commit run markdownlint -a
 pre-commit run yamllint -a
 ```
 
-### Understanding the task
+### Understanding the Task
 
-- When task is not clear, check further relevant information for better clarity.
-- If triggered by a short comment, check if parent's comment exist and consist further information.
-- If none of above helps, and task is ambiguous, comminicate to the user with potential options.
+- When the task is not clear, look for additional context.
+- If triggered by a brief comment, check whether the parent comment exists and includes more detail.
+- If it's still ambiguous, communicate with the user and propose options.
 
 ### Testing
 
@@ -94,7 +93,6 @@ on top of the updated target branch:
 - **Always** verify with `git diff` that only your changes remain
 - **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
 
-
 ### Testing Xero Scripts
 
 ```bash
@@ -107,38 +105,6 @@ cd scripts/
 # Ensure scripts are executable
 chmod +x scripts/*.py
 ```
-
-### Adding or Modifying Workflows
-
-- Workflows in `.github/workflows/` reference remote workflows via `workflow_call`
-- Test workflow changes on a feature branch before merging to main
-- Use `actionlint` to validate workflow syntax locally
-
-### Updating Coding Standards
-
-- Update `.markdownlint.yaml`, `.yamllint`, or `.editorconfig` for linting rules
-- Run `pre-commit run -a` to verify changes pass all checks
-
-## Integrating Changes from Target Branch
-
-Recommended way is to use the **cherry-pick workflow** to rebase your commits
-on top of the updated target branch:
-
-1. Identify your feature commits
-2. Fetch the latest target branch
-3. Reset your branch to target (with backup)
-4. Cherry-pick your feature commits
-5. Verify only your changes remain
-
-**For detailed step-by-step instructions with commands**, see:
-[`.github/skills/git/SKILL.md` - "Integrating Changes from Target Branch"](.github/skills/git/SKILL.md#integrating-changes-from-target-branch-avoiding-merge-commits)
-
-### Key Points
-
-- **Never** use `git merge <target-branch>` for branch integration
-- **Always** create backup tags before destructive operations
-- **Always** verify with `git diff` that only your changes remain
-- **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
 
 ### Critical: Using `report_progress` Tool
 
@@ -166,7 +132,6 @@ tries to auto-rebase (e.g., 113 commits), it encounters conflicts it cannot reso
 **For complete details**, see:
 [`.github/skills/git/SKILL.md` - "Working with Automation Tools"](.github/skills/git/SKILL.md#working-with-automation-tools)
 
-
 ### Environment Setup
 
 ```bash
@@ -187,16 +152,6 @@ cp .env.example .env
 - **OAuth2 Flow**: Uses authorization code flow with token refresh
 - **Output Formats**: Supports plain, csv, json, and yaml output formats
 - **Pagination**: Built-in pagination support with configurable page size
-
-## Project Structure
-
-- `.devcontainer/`: Development container configuration
-- `.github/`: GitHub workflows and instructions
-- `docs/`: How-to guides and documentation
-- `scripts/`: CLI scripts (main: `fa_cli.py`)
-- `tests/`: Test files
-- `.env.example`: Example environment configuration
-
 
 ## References
 
@@ -228,7 +183,6 @@ If Copilot or automated checks behave unexpectedly:
 - Verify `.markdownlint.yaml` and `.yamllint` have not been modified incorrectly.
 - If problems persist, open an issue with details of the command run and any error output.
 
-### Shell commands issues
+### Project-specific issues
 
-- Prefix shell commands with `time` to measure execution duration for better visibility.
-- When command takes too long, use `timeout` or similar approach to limit execution time.
+TBC
