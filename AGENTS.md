@@ -51,7 +51,7 @@ chmod +x scripts/*.py
 ### Understanding the task
 
 - When task is not clear, check further relevant information for better clarity.
-- If triggered by a short comment, check if parent's comment exist and consist further information.
+- If triggered by a short comment, check if the parent comment exists and contains further information.
 - If none of above helps, and task is ambiguous, communicate to the user with potential options.
 
 ### Adding or Modifying Workflows
