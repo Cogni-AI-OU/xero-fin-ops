@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for Claude automation agents working in this repository.
+Guidance for automation agents working in this repository.
 
 ## Quick Start
 
