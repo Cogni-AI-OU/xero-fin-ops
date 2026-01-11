@@ -17,8 +17,8 @@ Follow the checklist below in order to review the current repository structure a
 files. For each item, check if the file exists, compare it with the template from `.github` repository, and
 create or update it as needed with repository-specific customizations.
 
-**IMPORTANT**: Many checklist items require updating existing files, not just creating missing ones. Pay close 
-attention to items marked "**REQUIRED**" or "Action: review and update" - these must be updated even if they 
+**IMPORTANT**: Many checklist items require updating existing files, not just creating missing ones. Pay close
+attention to items marked "**REQUIRED**" or "Action: review and update" - these must be updated even if they
 exist. Do not skip items just because a file already exists.
 
 ## Checklist
@@ -387,7 +387,7 @@ exist. Do not skip items just because a file already exists.
 
 - [ ] **Validate all created/updated files**
   - Run pre-commit checks: `pre-commit run -a`
-    In case of errors, compare `.pre-commit-config.yaml` with upstream if anything else is missing. 
+    In case of errors, compare `.pre-commit-config.yaml` with upstream if anything else is missing.
     Otherwise fix any reported linting errors found
   - Ensure all YAML files are valid: `yamllint .`
   - Ensure all Markdown files are valid: `markdownlint **/*.md`
@@ -511,14 +511,14 @@ Follow the phases in order:
 
 A successful repository setup includes:
 
-- ✅ All essential configuration files present and valid
-- ✅ Pre-commit hooks configured and working
-- ✅ GitHub Actions workflows configured (using remote references where possible)
-- ✅ Devcontainer configured (if using containerized development)
-- ✅ Documentation updated (README, AGENTS.md, etc.)
-- ✅ All linters passing
-- ✅ Repository follows organization standards
-- ✅ Repository-specific needs addressed
+- [x] All essential configuration files present and valid
+- [x] Pre-commit hooks configured and working
+- [x] GitHub Actions workflows configured (using remote references where possible)
+- [x] Devcontainer configured (if using containerized development)
+- [x] Documentation updated (README, AGENTS.md, etc.)
+- [x] All linters passing
+- [x] Repository follows organization standards
+- [x] Repository-specific needs addressed
 
 ## Final Deliverables
 

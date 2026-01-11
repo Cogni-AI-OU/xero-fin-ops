@@ -75,11 +75,11 @@ grep -n "pattern" <file>   # Search for specific content
 1. **Check if command exists**: `which <command> || command -v <command>`
 2. **If not found, try to install it**.
 3. **Try alternative commands**:
-   - `wc -l` fails → try `cat <file> | wc -l`
-   - `grep` fails → try `awk` or `sed`
-   - `jq` not available → try `python -m json.tool`
-   - `yq` not available → try `python -c "import yaml"`
-   - MCP not available → try `gh`
+   - `wc -l` fails -> try `cat <file> | wc -l`
+   - `grep` fails -> try `awk` or `sed`
+   - `jq` not available -> try `python -m json.tool`
+   - `yq` not available -> try `python -c "import yaml"`
+   - MCP not available -> try `gh`
 4. **Check permissions**: `ls -la <file>` before trying to read/write
 5. **Verify paths exist**: `test -f <file> && echo "exists" || echo "not found"`
 
@@ -232,7 +232,7 @@ grep -n "pattern" <file>   # Search for specific content
 
 ### Documentation
 
-- Keep docs concise—use `<placeholder>` instead of actual values
+- Keep docs concise - use `<placeholder>` instead of actual values
 - Update relevant documentation after code changes
 - Raise issues for unrelated bugs discovered during work (if permissions allow)
 
