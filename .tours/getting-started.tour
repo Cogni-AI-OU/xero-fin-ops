@@ -15,12 +15,12 @@
     },
     {
       "title": "Python Scripts Directory",
-      "description": "The `scripts/` directory contains all the Python CLI tools for Xero management:\n\n- **xero_journal_manager.py**: View and edit manual journals\n- **xero_coa_manager.py**: Manage Chart of Accounts\n- **xero_pnl_report.py**: Generate Profit & Loss reports\n- **xero_balance_sheet_report.py**: Generate Balance Sheet reports\n- **xero_connect.py**: Authenticate and generate `.token.json`\n\nAll scripts use `uv` for dependency management and include executable shebang headers.",
+      "description": "The `scripts/` directory contains all the Python CLI tools for Xero management:\n\n- **xero_journal_manager.py**: View and edit manual journals\n- **xero_coa_manager.py**: Manage Chart of Accounts\n- **xero_pnl_report.py**: Generate Profit & Loss reports\n- **xero_balance_sheet_report.py**: Generate Balance Sheet reports\n- **xero_connect.py**: Authenticate and generate `.xero_token.json`\n\nAll scripts use `uv` for dependency management and include executable shebang headers.",
       "directory": "scripts"
     },
     {
       "title": "Configuration Example",
-      "description": "The `xero_config.example.yaml` file shows the required configuration structure for Xero API authentication.\n\nYou'll need to:\n1. Copy this file to `xero_config.yaml`\n2. Fill in your Xero API credentials\n3. Run `xero_connect.py` to authenticate and generate `.token.json`\n\n**Note**: Both `xero_config.yaml` and `.token.json` are gitignored for security.",
+      "description": "The `xero_config.example.yaml` file shows the required configuration structure for Xero API authentication.\n\nYou'll need to:\n1. Copy this file to `xero_config.yaml`\n2. Fill in your Xero API credentials\n3. Run `xero_connect.py` to authenticate and generate `.xero_token.json`\n\n**Note**: Both `xero_config.yaml` and `.xero_token.json` are gitignored for security.",
       "file": "xero_config.example.yaml",
       "line": 1
     },
