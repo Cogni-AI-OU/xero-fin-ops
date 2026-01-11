@@ -48,7 +48,7 @@
     },
     {
       "title": "Python Coding Standards",
-      "description": "When contributing to this repository, follow these Python standards:\n\n- Use Python 3.11+\n- Use `uv` script headers for dependency management\n- Follow PEP 8 style guidelines\n- Use `argparse` for CLI argument parsing\n- Handle `BrokenPipeError` for CLI tools\n- Always load credentials from `xero_config.yaml` and `.token.json`\n- Implement `--dry-run` flag for commands that modify data\n\nSee `.github/copilot-instructions.md` for complete details.",
+      "description": "When contributing to this repository, follow these Python standards:\n\n- Use Python 3.11+\n- Use `uv` script headers for dependency management\n- Follow PEP 8 style guidelines\n- Use `argparse` for CLI argument parsing\n- Handle `BrokenPipeError` for CLI tools\n- Always load credentials from `xero_config.yaml` and `.xero_token.json`\n- Implement `--dry-run` flag for commands that modify data\n\nSee `.github/copilot-instructions.md` for complete details.",
       "file": ".github/copilot-instructions.md",
       "line": 1
     },
