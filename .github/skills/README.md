@@ -14,9 +14,12 @@ For more information, see
 
 ## Skills in this repository
 
-This repository uses skills from the organization's `.github` repository. To add
-skills to this repository, copy them from the organization repository or create
-your own following the guide below.
+| Skill | Description |
+| ----- | ----------- |
+| [git](git/SKILL.md) | Guide for using git with non-interactive, safe operations |
+| [github-actions](github-actions/SKILL.md) | Diagnosing and debugging failing GitHub Actions workflows |
+| [pre-commit](pre-commit/SKILL.md) | Guide for using pre-commit hooks to validate code formatting, linting, and security checks |
+| [skill-writer](skill-writer/SKILL.md) | Generate or update SKILL.md files for GitHub Copilot coding agents |
 
 ## Creating skills
 
