@@ -103,7 +103,7 @@ This repository contains Python CLI tools for managing Xero accounting data:
 - Scripts use `uv` for dependency management with script headers
 - All scripts should be executable and use `#!/usr/bin/env -S uv run --script`
 - Handle `BrokenPipeError` for CLI tools that might be piped
-- Load credentials from `xero_config.yaml` and `.token.json`
+- Load credentials from `xero_config.yaml` and `.xero_token.json`
 - Always implement `--dry-run` flag for commands that modify data
 
 ## Troubleshooting
