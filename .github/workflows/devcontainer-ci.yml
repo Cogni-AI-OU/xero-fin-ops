@@ -1,0 +1,15 @@
+---
+name: Development Containers (CI)
+on:
+  pull_request:
+    paths:
+      - .devcontainer/**
+      - .github/workflows/devcontainer-ci.yml
+  push:
+    branches:
+      - main
+    paths:
+      - .devcontainer/**
+jobs:
+  devcontainer-build:
+    uses: Cogni-AI-OU/.github/.github/workflows/devcontainer-ci.yml@main
