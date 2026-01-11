@@ -1,0 +1,66 @@
+{
+  "title": "Getting Started with Xero FinOps",
+  "description": "A comprehensive walkthrough of the repository structure and tools",
+  "isPrimary": true,
+  "steps": [
+    {
+      "title": "Welcome",
+      "description": "# Welcome to Xero FinOps!\n\nThis repository contains Python CLI tools for managing Xero accounting data via the Xero API. The scripts are designed to be run as standalone executables using `uv` for dependency management.\n\nThis tour will guide you through:\n- Repository structure\n- Main scripts and their purposes\n- Configuration setup\n- Development workflows\n- GitHub Actions and automation\n\nLet's get started!"
+    },
+    {
+      "title": "README Overview",
+      "description": "The README provides essential information about the repository, including setup instructions, script descriptions, and usage examples.\n\nKey sections:\n- Project overview\n- Available scripts\n- Setup and authentication\n- Contributing guidelines",
+      "file": "README.md",
+      "line": 1
+    },
+    {
+      "title": "Python Scripts Directory",
+      "description": "The `scripts/` directory contains all the Python CLI tools for Xero management:\n\n- **xero_journal_manager.py**: View and edit manual journals\n- **xero_coa_manager.py**: Manage Chart of Accounts\n- **xero_pnl_report.py**: Generate Profit & Loss reports\n- **xero_balance_sheet_report.py**: Generate Balance Sheet reports\n- **xero_connect.py**: Authenticate and generate `.token.json`\n\nAll scripts use `uv` for dependency management and include executable shebang headers.",
+      "directory": "scripts"
+    },
+    {
+      "title": "Configuration Example",
+      "description": "The `xero_config.example.yaml` file shows the required configuration structure for Xero API authentication.\n\nYou'll need to:\n1. Copy this file to `xero_config.yaml`\n2. Fill in your Xero API credentials\n3. Run `xero_connect.py` to authenticate and generate `.token.json`\n\n**Note**: Both `xero_config.yaml` and `.token.json` are gitignored for security.",
+      "file": "xero_config.example.yaml",
+      "line": 1
+    },
+    {
+      "title": "GitHub Workflows",
+      "description": "The `.github/workflows/` directory contains CI/CD workflows:\n\n- **check.yml**: Runs pre-commit checks and actionlint\n- **claude.yml**: Enables Claude AI for issue/PR assistance\n- **claude-review.yml**: Automated PR code reviews\n- **devcontainer-ci.yml**: Tests development container builds\n\nAll workflows reference remote workflows from the organization's `.github` repository.",
+      "directory": ".github/workflows"
+    },
+    {
+      "title": "Pre-commit Configuration",
+      "description": "The `.pre-commit-config.yaml` defines automated checks that run before commits:\n\n- yamllint: YAML linting\n- markdownlint: Markdown formatting\n- codespell: Spell checking\n- gitleaks: Secret detection\n- black: Python formatting\n- flake8: Python linting\n\nRun `pre-commit install` to enable hooks locally.",
+      "file": ".pre-commit-config.yaml",
+      "line": 1
+    },
+    {
+      "title": "Development Container",
+      "description": "The `.devcontainer/` directory configures a containerized development environment with:\n\n- Python 3.11+\n- Pre-commit hooks\n- GitHub CLI\n- Docker-in-Docker\n- VS Code extensions\n\nOpen the repository in VS Code and click \"Reopen in Container\" to use it.",
+      "directory": ".devcontainer"
+    },
+    {
+      "title": "Agent Configuration",
+      "description": "AI agents (GitHub Copilot, Claude Code) use these files for guidance:\n\n- **AGENTS.md**: Quick reference for common tasks\n- **CLAUDE.md**: Claude-specific configuration\n- **.github/copilot-instructions.md**: Copilot coding standards\n- **.github/instructions/**: Language-specific formatting rules\n- **.github/agents/**: Custom agent configurations\n\nThese ensure consistent code quality and development practices.",
+      "file": "AGENTS.md",
+      "line": 1
+    },
+    {
+      "title": "Python Coding Standards",
+      "description": "When contributing to this repository, follow these Python standards:\n\n- Use Python 3.11+\n- Use `uv` script headers for dependency management\n- Follow PEP 8 style guidelines\n- Use `argparse` for CLI argument parsing\n- Handle `BrokenPipeError` for CLI tools\n- Always load credentials from `xero_config.yaml` and `.token.json`\n- Implement `--dry-run` flag for commands that modify data\n\nSee `.github/copilot-instructions.md` for complete details.",
+      "file": ".github/copilot-instructions.md",
+      "line": 1
+    },
+    {
+      "title": "CODEOWNERS",
+      "description": "The CODEOWNERS file defines who should review changes to specific parts of the repository.\n\nAutomatic review requests will be sent to these owners when PRs modify matching files.",
+      "file": ".github/CODEOWNERS",
+      "line": 1
+    },
+    {
+      "title": "Next Steps",
+      "description": "# You're all set!\n\nNow that you've completed the tour, here are some suggested next steps:\n\n1. **Set up authentication**: Copy `xero_config.example.yaml` to `xero_config.yaml` and configure your credentials\n2. **Install pre-commit**: Run `pre-commit install` to enable local checks\n3. **Explore the scripts**: Try running `./scripts/xero_journal_manager.py --help`\n4. **Check out the documentation**: Review AGENTS.md for common development tasks\n5. **Consider using the devcontainer**: For a consistent development environment\n\nHappy coding! If you need help, mention `@claude` in issues or PRs."
+    }
+  ]
+}

@@ -6,4 +6,4 @@ on:
 jobs:
   claude-review:
     uses: Cogni-AI-OU/.github/.github/workflows/claude-review.yml@main
-    secrets: inherit
+    secrets: inherit  # pragma: allowlist secret
