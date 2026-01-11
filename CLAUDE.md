@@ -85,7 +85,7 @@ The Claude Code Action automatically provides these MCP servers:
 **Custom MCP Configuration:**
 
 For information on configuring custom MCP servers, see the
-[Custom Agents documentation](.github/agents/README.md#mcp-server-setup).
+[Custom Agents documentation](.github/agents/README.md).
 
 ## Prompting Best Practices
 
