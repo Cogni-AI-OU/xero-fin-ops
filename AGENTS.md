@@ -12,10 +12,21 @@ Guidance for automation agents working in this repository.
 For detailed coding standards and formatting guidelines, refer to:
 
 - [Copilot Instructions](.github/copilot-instructions.md) - Main coding standards
+- [Ansible](.github/instructions/ansible.instructions.md) - Ansible conventions
+- [JSON](.github/instructions/json.instructions.md) - JSON formatting standards
+- [Markdown](.github/instructions/markdown.instructions.md) - Markdown standards
+- [YAML](.github/instructions/yaml.instructions.md) - YAML formatting standards
+
+### Specialized Agents
+
+For specific tasks, use the following specialized agent instructions:
+
+- [Code Tour Agent](.github/agents/code-tour.agent.md) - For creating/updating `.tours/` files
+- [Copilot Plus Agent](.github/agents/copilot-plus.agent.md) - Enhanced Copilot capabilities
 
 ## Common Tasks
 
-### Before commit
+### Before the changes
 
 Before each commit change:
 
@@ -32,8 +43,57 @@ pre-commit run -a
 # Run specific checks
 pre-commit run markdownlint -a
 pre-commit run yamllint -a
-pre-commit run flake8 -a
 ```
+
+### Understanding the task
+
+- When task is not clear, check further relevant information for better clarity.
+- If triggered by a short comment, check if parent's comment exist and consist further information.
+- If none of above helps, and task is ambiguous, comminicate to the user with potential options.
+
+### Testing
+
+```bash
+# Run Molecule tests
+molecule test
+
+# Syntax check
+molecule syntax
+```
+
+### Adding or Modifying Workflows
+
+- Workflows in `.github/workflows/` can be reused via `workflow_call`
+- Test workflow changes on a feature branch before merging to main
+- Use `actionlint` to validate workflow syntax locally
+
+### Updating Coding Standards
+
+- Language-specific instructions are in `.github/instructions/`
+- Update `.markdownlint.yaml`, `.yamllint`, or `.editorconfig` for linting rules
+- Run `pre-commit run -a` to verify changes pass all checks
+
+## Integrating Changes from Target Branch
+
+Recommended way is to use the **cherry-pick workflow** to rebase your commits
+on top of the updated target branch:
+
+1. Identify your feature commits
+2. Fetch the latest target branch
+3. Reset your branch to target (with backup)
+4. Cherry-pick your feature commits
+5. Verify only your changes remain
+
+**For detailed step-by-step instructions with commands**, see:
+[`.github/skills/git/SKILL.md` - "Integrating Changes from Target Branch"](.github/skills/git/SKILL.md#integrating-changes-from-target-branch-avoiding-merge-commits)
+
+### Key Points
+
+- **Never** use `git merge <target-branch>` for branch integration
+- **Always** create backup tags before destructive operations
+- **Always** verify with `git diff` that only your changes remain
+- **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
+
 
 ### Testing Xero Scripts
 
@@ -47,12 +107,6 @@ cd scripts/
 # Ensure scripts are executable
 chmod +x scripts/*.py
 ```
-
-### Understanding the task
-
-- When task is not clear, check further relevant information for better clarity.
-- If triggered by a short comment, check if the parent comment exists and contains further information.
-- If none of above helps, and task is ambiguous, communicate to the user with potential options.
 
 ### Adding or Modifying Workflows
 
@@ -111,6 +165,38 @@ tries to auto-rebase (e.g., 113 commits), it encounters conflicts it cannot reso
 
 **For complete details**, see:
 [`.github/skills/git/SKILL.md` - "Working with Automation Tools"](.github/skills/git/SKILL.md#working-with-automation-tools)
+
+
+### Environment Setup
+
+```bash
+# Install dependencies
+pip install -r .devcontainer/requirements.txt
+
+# Install pre-commit hooks
+pre-commit install
+
+# Set up environment variables (copy from .env.example)
+cp .env.example .env
+# Edit .env with your FreeAgent OAuth credentials
+```
+
+## Configuration
+
+- **Environment Variables**: All configuration is via `FREEAGENT_*` environment variables
+- **OAuth2 Flow**: Uses authorization code flow with token refresh
+- **Output Formats**: Supports plain, csv, json, and yaml output formats
+- **Pagination**: Built-in pagination support with configurable page size
+
+## Project Structure
+
+- `.devcontainer/`: Development container configuration
+- `.github/`: GitHub workflows and instructions
+- `docs/`: How-to guides and documentation
+- `scripts/`: CLI scripts (main: `fa_cli.py`)
+- `tests/`: Test files
+- `.env.example`: Example environment configuration
+
 
 ## References
 
