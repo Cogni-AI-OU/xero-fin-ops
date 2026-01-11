@@ -226,8 +226,9 @@ exist. Do not skip items just because a file already exists.
   - Check if file exists (if `.devcontainer/` exists)
   - Reference: `https://github.com/Cogni-AI-OU/.github/blob/main/.devcontainer/apt-packages.txt`
   - Purpose: System packages to install in devcontainer
-  - Action: Create if missing (even if devcontainer.json exists)
-  - **Critical**: This file must be created because devcontainer.json references it in `onCreateCommand`
+  - Action: Create with base packages; merge if exists
+  - Base packages: coreutils, gh, git, mawk, sed, time, vim
+  - This file must be created because devcontainer.json references it in `onCreateCommand`
   - Customize: Add project-specific system dependencies
 
 ### Phase 5: Code Tours and Documentation
@@ -358,13 +359,14 @@ exist. Do not skip items just because a file already exists.
   - Action: Create directory with README.md; optionally copy skill subdirectories
   - Required files:
     - `README.md` - Overview of agent skills and how to use them
+    - `context-aware-ops/` - Intelligent resource management
     - `git/` - Guide for safe git operations
     - `github-actions/` - Debugging failing workflows
     - `pre-commit/` - Using pre-commit hooks effectively
+    - `robust-commands/` - Resilient command execution
     - `skill-writer/` - Generate/update SKILL.md files
   - Optional skills (copy as needed):
-    - `context-aware-ops/` - Intelligent resource management
-    - `robust-commands/` - Resilient command execution
+    - Check remote
   - Customize: Add repository-specific skills as needed
 
 ### Phase 8: Additional Organization Files
