@@ -387,7 +387,8 @@ exist. Do not skip items just because a file already exists.
 
 - [ ] **Validate all created/updated files**
   - Run pre-commit checks: `pre-commit run -a`
-  - Fix any linting errors found
+    In case of errors, compare `.pre-commit-config.yaml` with upstream if anything else is missing. 
+    Otherwise fix any reported linting errors found
   - Ensure all YAML files are valid: `yamllint .`
   - Ensure all Markdown files are valid: `markdownlint **/*.md`
   - Ensure GitHub Actions workflows are valid: `actionlint .github/workflows/*.yml`
