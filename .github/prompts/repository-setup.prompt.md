@@ -358,13 +358,13 @@ exist. Do not skip items just because a file already exists.
   - Action: Create directory with README.md; optionally copy skill subdirectories
   - Required files:
     - `README.md` - Overview of agent skills and how to use them
-  - Optional skills (copy as needed):
-    - `context-aware-ops/` - Intelligent resource management
     - `git/` - Guide for safe git operations
     - `github-actions/` - Debugging failing workflows
     - `pre-commit/` - Using pre-commit hooks effectively
-    - `robust-commands/` - Resilient command execution
     - `skill-writer/` - Generate/update SKILL.md files
+  - Optional skills (copy as needed):
+    - `context-aware-ops/` - Intelligent resource management
+    - `robust-commands/` - Resilient command execution
   - Customize: Add repository-specific skills as needed
 
 ### Phase 8: Additional Organization Files
