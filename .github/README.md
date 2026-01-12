@@ -28,7 +28,7 @@ Prompts can be referenced directly in agent conversations:
 standardize this repository.
 ```
 
-For detailed usage instructions, see [prompts/repository-setup.prompt.md](prompts/repository-setup.prompt.md).
+For detailed usage instructions, see [prompts/README.md](prompts/README.md).
 
 ## Problem Matchers
 
