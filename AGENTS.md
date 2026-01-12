@@ -1,6 +1,6 @@
 # AGENTS.md
 
-[Guidance for coding agents](https://agents.md/) working in this repository.
+Guidance for coding agents working in this repository.
 
 ## Quick Start
 
