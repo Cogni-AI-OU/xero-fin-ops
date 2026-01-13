@@ -192,9 +192,7 @@ def list_journals(api_client, tenant_id, query=None):
             )
 
 
-def edit_journal(
-    api_client, tenant_id, journal_id, find_account, new_account, dry_run=False
-):
+def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, dry_run=False):
     accounting_api = AccountingApi(api_client)
 
     try:
@@ -252,24 +250,14 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
-    view_parser = subparsers.add_parser(
-        "view", help="List all manual journals in CSV format"
-    )
-    view_parser.add_argument(
-        "query", nargs="?", help="Filter query (e.g. \"AccountCode == '810'\")"
-    )
+    view_parser = subparsers.add_parser("view", help="List all manual journals in CSV format")
+    view_parser.add_argument("query", nargs="?", help="Filter query (e.g. \"AccountCode == '810'\")")
 
     # Edit command
     edit_parser = subparsers.add_parser("edit", help="Edit a manual journal")
-    edit_parser.add_argument(
-        "--journal-id", required=True, help="The ID of the journal to edit"
-    )
-    edit_parser.add_argument(
-        "--find-account", required=True, help="The account code to find"
-    )
-    edit_parser.add_argument(
-        "--new-account", required=True, help="The new account code"
-    )
+    edit_parser.add_argument("--journal-id", required=True, help="The ID of the journal to edit")
+    edit_parser.add_argument("--find-account", required=True, help="The account code to find")
+    edit_parser.add_argument("--new-account", required=True, help="The new account code")
     edit_parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -285,9 +273,7 @@ def main():
         return
 
     # Create the token object first
-    oauth2_token = OAuth2Token(
-        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
-    )
+    oauth2_token = OAuth2Token(client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"])
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(

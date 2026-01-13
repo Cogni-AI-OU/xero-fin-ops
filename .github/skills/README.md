@@ -12,14 +12,10 @@ Agent Skills work with:
 For more information, see
 [About Agent Skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills).
 
-## Skills in this repository
+## Skills catalog
 
-| Skill | Description |
-| ----- | ----------- |
-| [git](git/SKILL.md) | Guide for using git with non-interactive, safe operations |
-| [github-actions](github-actions/SKILL.md) | Diagnosing and debugging failing GitHub Actions workflows |
-| [pre-commit](pre-commit/SKILL.md) | Guide for using pre-commit hooks to validate code formatting, linting, and security checks |
-| [skill-writer](skill-writer/SKILL.md) | Generate or update SKILL.md files for GitHub Copilot coding agents |
+The full, machine-readable list of skills lives in [AGENTS.md](AGENTS.md). Use it when you need the
+authoritative catalog for agent loading. This README stays human-focused.
 
 ## Creating skills
 

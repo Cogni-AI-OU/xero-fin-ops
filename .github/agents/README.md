@@ -19,11 +19,12 @@ Enhanced agent with critical thinking, robust problem-solving, and context-aware
 
 Expert agent for creating and maintaining VSCode CodeTour files. Features:
 
-- Create comprehensive `.tour` JSON files
-- Design step-by-step codebase walkthroughs
-- Implement proper file references and directory steps
-- Configure tour versioning with git refs
-- Best practices for tour organization
+- Creating `.tours/` files with proper CodeTour schema
+- Designing step-by-step walkthroughs for complex codebases
+- Implementing interactive tours with command links and code snippets
+- Setting up primary tours and tour linking sequences
+
+**When to use**: Anytime you need to create or update `.tour` files for repository onboarding.
 
 ## How to Use Custom Agents
 
@@ -31,23 +32,59 @@ Expert agent for creating and maintaining VSCode CodeTour files. Features:
 
 - Download the desired agent configuration file (`*.agent.md`) and add it to your repository.
 - Use the Copilot CLI for local testing: [Copilot CLI](https://gh.io/customagents/cli).
-
-### Activation
-
 - Merge the agent configuration file into the default branch of your repository.
-- Access installed agents through the VS Code Chat interface, Copilot CLI, or assign them in CCA.
-
-## Reference Documentation
+- Access installed agents through the VS Code Chat interface, Copilot CLI,
+  or assign them in Copilot Coding Agent (CCA).
 
 For more details, see:
 
-- [About custom agents](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-custom-agents)
+- [About custom agents](https://gh.io/customagents)
+- [Custom Agents Documentation](https://gh.io/customagents/config).
 - [Create custom agents](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-custom-agents)
-- [Customizing the development environment][customize-env]
-- [Customizing or disabling the firewall][firewall-config]
+- [Copilot CLI](https://gh.io/customagents/cli)
+- [GitHub Awesome Copilot repository](https://github.com/github/awesome-copilot)
+- [Supported Models](https://docs.github.com/en/copilot/reference/ai-models/supported-models)
 
-For a collection of awesome custom agents, visit the
-[GitHub Awesome Copilot repository](https://github.com/github/awesome-copilot).
+## Customizing development environment
+
+See: [Customizing the development environment for GitHub Copilot coding agent][customize-env].
+
+## Firewall
+
+See: [Customizing or disabling the firewall for GitHub Copilot coding agent][firewall-config].
+
+### Firewall allowlist
+
+See [FIREWALL.md](FIREWALL.md) for recommended hosts to allow and the official guidance link.
+
+<!-- Named links -->
+
+[customize-env]: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
+[firewall-config]: https://gh.io/copilot/firewall-config
+
+### MCP Server Setup
+
+Some agents require MCP servers to function. The Claude Code Action provides
+built-in MCP servers for GitHub operations (`github_comment` and
+`github_inline_comment`).
+
+#### Custom MCP Servers
+
+You can add custom MCP servers for additional integrations.
+
+**Important notes:**
+
+- File-based config cannot use GitHub Actions secrets (`${{ secrets.* }}`). Use
+  inline config for secrets.
+- HTTP-based MCP servers (using `"type": "http"`) may work with inline config
+  but can fail with file-based config due to how the Claude Code process loads
+  external files.
+- **Current configuration**: This repository uses inline `--mcp-config` for the
+  GitHub Copilot MCP endpoint (see `.github/workflows/claude-review.yml`) as it's
+  an HTTP-based server. File-based config is available for custom command-based
+  MCP servers if needed.
+
+Follow the instructions in the agent's documentation to configure the necessary MCP servers.
 
 ## Security Considerations
 
@@ -67,7 +104,8 @@ proper repository safeguards.
 
 Repository administrators must configure:
 
-1. **Branch protection rules** on main/protected branches requiring PR reviews and status checks
+1. **Branch protection rules** on main/protected branches requiring PR reviews
+   and status checks
 2. **GitHub audit log monitoring** for `github-actions[bot]` commit activity
 3. **CODEOWNERS** files for sensitive directories requiring specific approvals
 
@@ -78,9 +116,21 @@ Repository administrators must configure:
 - Monitor workflow logs for unexpected behavior
 - Rotate `ANTHROPIC_API_KEY` periodically
 
-See [.github/README.md](../README.md#security) for detailed security configuration.
+## Troubleshooting
 
-<!-- Named links -->
+### Claude Not Responding to Comments
 
-[customize-env]: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
-[firewall-config]: https://gh.io/copilot/firewall-config
+If Claude isn't responding to your comments, verify:
+
+1. **Permissions**: You must have one of these roles:
+   - Repository OWNER, MEMBER, COLLABORATOR, or CONTRIBUTOR
+   - PR/issue author (on your own content only)
+
+2. **Trigger conditions** for PR review comments:
+   - Your comment contains `@claude`, OR
+   - You're replying to a comment from `github-actions[bot]` (Claude's responses), OR
+   - You're replying to a comment that contains `@claude`
+
+The workflow uses a two-stage filter to prevent abuse while allowing natural
+conversation flow. Check the Actions tab in your repository for workflow run details
+if Claude doesn't respond as expected.

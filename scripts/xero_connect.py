@@ -63,9 +63,7 @@ def get_xero_client(config):
     api_client = ApiClient(
         Configuration(
             debug=True,
-            oauth2_token=OAuth2Token(
-                client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
-            ),
+            oauth2_token=OAuth2Token(client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]),
         ),
         pool_threads=1,
     )
@@ -133,9 +131,7 @@ def start_auth_server(config):
 
 
 def generate_auth_url(config):
-    scope_str = config.get(
-        "SCOPE", "offline_access accounting.transactions accounting.settings"
-    )
+    scope_str = config.get("SCOPE", "offline_access accounting.transactions accounting.settings")
 
     base_url = "https://login.xero.com/identity/connect/authorize"
     params = {
@@ -156,9 +152,7 @@ if __name__ == "__main__":
     config = load_config()
     if config:
         if config["CLIENT_ID"] == "YOUR_CLIENT_ID_HERE":
-            print(
-                "Please update xero_config.yaml with your actual CLIENT_ID and CLIENT_SECRET."
-            )
+            print("Please update xero_config.yaml with your actual CLIENT_ID and CLIENT_SECRET.")
         else:
             auth_url = generate_auth_url(config)
             print(f"\nOpening browser to: {auth_url}")
