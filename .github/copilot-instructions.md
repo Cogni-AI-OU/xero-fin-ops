@@ -53,3 +53,37 @@ to be run as standalone executables using `uv` for dependency management.
 - **Filtering**: When implementing `view` commands, allow dynamic filtering using Python syntax
   (e.g., `eval()` with safety checks) for flexibility.
 - **Dry Runs**: Always implement a `--dry-run` flag for commands that modify data.
+
+### Testing Xero Scripts
+
+```bash
+# Test individual scripts
+cd scripts/
+./xero_journal_manager.py --help
+./xero_coa_manager.py --help
+./xero_pnl_report.py --help
+
+# Ensure scripts are executable
+chmod +x scripts/*.py
+```
+
+## Environment Setup
+
+```bash
+# Install dependencies
+pip install -r .devcontainer/requirements.txt
+
+# Install pre-commit hooks
+pre-commit install
+
+# Set up environment variables (copy from .env.example)
+cp .env.example .env
+# Edit .env with your FreeAgent OAuth credentials
+```
+
+## Configuration
+
+- **Environment Variables**: All configuration is via `FREEAGENT_*` environment variables
+- **OAuth2 Flow**: Uses authorization code flow with token refresh
+- **Output Formats**: Supports plain, csv, json, and yaml output formats
+- **Pagination**: Built-in pagination support with configurable page size
