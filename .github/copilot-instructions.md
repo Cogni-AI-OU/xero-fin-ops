@@ -78,7 +78,7 @@ pre-commit install
 
 # Set up environment variables (copy from .env.example)
 cp .env.example .env
-# Edit .env with your FreeAgent OAuth credentials
+# Edit .env with your Xero OAuth credentials (or use xero_config.yaml)
 ```
 
 ## Configuration
