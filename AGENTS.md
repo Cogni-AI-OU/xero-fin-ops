@@ -2,19 +2,24 @@
 
 Guidance for coding agents working in this repository.
 
-## Quick Start
+For general project guidance, see [README.md](README.md).
 
-- See [README.md](README.md) for setup and installation instructions
-- See [.tours/getting-started.tour](.tours/getting-started.tour) for a guided walkthrough
+## Required References
+
+- Project overview and install steps: [README.md](README.md)
+- Agent configuration and conventions: [.github/copilot-instructions.md](.github/copilot-instructions.md)
+- Language and format rules: see [.github/instructions/AGENTS.md](.github/instructions/AGENTS.md)
+- Workflow and navigation help: [.tours/getting-started.tour](.tours/getting-started.tour)
 - For enhanced agent capabilities, see [Copilot Plus](.github/agents/copilot-plus.agent.md)
 
-## Instructions
+## Agent Catalogs
 
-For detailed coding standards and formatting guidelines, refer to:
+Use these catalogs for authoritative, machine-readable lists of resources:
 
-- [Copilot Instructions](.github/copilot-instructions.md) - Main coding standards
-- [Markdown](.github/instructions/markdown.instructions.md) - Markdown standards
-- [YAML](.github/instructions/yaml.instructions.md) - YAML formatting standards
+- Skills: [.github/skills/AGENTS.md](.github/skills/AGENTS.md) - loadable skills and their SKILL.md entries
+- Instructions: [.github/instructions/AGENTS.md](.github/instructions/AGENTS.md) - formatting and language rules
+- Workflows: [.github/workflows/AGENTS.md](.github/workflows/AGENTS.md) - reusable GitHub Actions with inputs/triggers
+- Prompts: [.github/prompts/AGENTS.md](.github/prompts/AGENTS.md) - available prompt files
 
 ### Specialized Agents
 
@@ -135,7 +140,7 @@ tries to auto-rebase (e.g., 113 commits), it encounters conflicts it cannot reso
 
 If you encounter firewall issues when using the GitHub Copilot Agent:
 
-- Refer to the [firewall configuration guide][firewall-guide] for details.
+- Refer to <https://gh.io/copilot/firewall-config> for configuration details.
 - If you need to allowlist additional hosts, update your firewall configuration accordingly
   and keep the list of allowed hosts in `.github/agents/FIREWALL.md` up to date.
 
@@ -146,7 +151,3 @@ If Copilot or automated checks behave unexpectedly:
 - Re-run `pre-commit run -a` locally to surface formatting or linting issues.
 - Verify `.markdownlint.yaml` and `.yamllint` have not been modified incorrectly.
 - If problems persist, open an issue with details of the command run and any error output.
-
-<!-- Named links -->
-
-[firewall-guide]: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-firewall
