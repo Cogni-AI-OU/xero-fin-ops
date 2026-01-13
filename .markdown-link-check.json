@@ -1,23 +1,5 @@
 {
   "ignorePatterns": [
-    {
-      "pattern": "^https://gh.io/"
-    },
-    {
-      "pattern": "^https://agents.md/"
-    },
-    {
-      "pattern": "^https://yaml-multiline.info/"
-    },
-    {
-      "pattern": "^https://developer.xero.com/"
-    },
-    {
-      "pattern": "^https://marketplace.visualstudio.com/"
-    },
-    {
-      "pattern": "^https://aka.ms/"
-    }
   ],
   "timeout": "10s",
   "retryOn429": true,
