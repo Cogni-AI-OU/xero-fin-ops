@@ -81,9 +81,7 @@ def main():
         return
 
     # Create the token object first
-    oauth2_token = OAuth2Token(
-        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
-    )
+    oauth2_token = OAuth2Token(client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"])
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
@@ -112,9 +110,7 @@ def main():
     print(f"Fetching P&L from {from_date} to {to_date}...")
 
     try:
-        report = accounting_api.get_report_profit_and_loss(
-            tenant_id, from_date=from_date, to_date=to_date
-        )
+        report = accounting_api.get_report_profit_and_loss(tenant_id, from_date=from_date, to_date=to_date)
 
         # The response is a ReportWithRows object
         # We need to traverse it to print nicely

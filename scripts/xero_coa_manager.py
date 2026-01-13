@@ -76,9 +76,7 @@ def get_api_client():
     config = load_config()
     token_data = load_token()
 
-    oauth2_token = OAuth2Token(
-        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
-    )
+    oauth2_token = OAuth2Token(client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"])
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
@@ -121,14 +119,10 @@ def list_accounts(api_client, tenant_id, query=None):
         accounts = accounting_api.get_accounts(tenant_id)
 
         writer = csv.writer(sys.stdout)
-        writer.writerow(
-            ["Code", "Name", "Type", "TaxType", "Description", "Status", "AccountID"]
-        )
+        writer.writerow(["Code", "Name", "Type", "TaxType", "Description", "Status", "AccountID"])
 
         # Sort by Code for better readability
-        sorted_accounts = sorted(
-            accounts.accounts, key=lambda x: x.code if x.code else ""
-        )
+        sorted_accounts = sorted(accounts.accounts, key=lambda x: x.code if x.code else "")
 
         for account in sorted_accounts:
             row_data = {
@@ -169,9 +163,7 @@ def list_accounts(api_client, tenant_id, query=None):
         sys.exit(1)
 
 
-def add_account(
-    api_client, tenant_id, code, name, account_type, description=None, tax_type=None
-):
+def add_account(api_client, tenant_id, code, name, account_type, description=None, tax_type=None):
     accounting_api = AccountingApi(api_client)
 
     try:
@@ -205,9 +197,7 @@ def add_account(
 
     try:
         result = accounting_api.create_account(tenant_id, new_account)
-        print(
-            f"Account created successfully: {result.accounts[0].name} ({result.accounts[0].code})"
-        )
+        print(f"Account created successfully: {result.accounts[0].name} ({result.accounts[0].code})")
     except Exception as e:
         print(f"Error creating account: {e}", file=sys.stderr)
         sys.exit(1)
@@ -219,9 +209,7 @@ def main():
 
     # View command
     view_parser = subparsers.add_parser("view", help="List all accounts in CSV format")
-    view_parser.add_argument(
-        "query", nargs="?", help="Filter query (e.g. \"Code == '810'\")"
-    )
+    view_parser.add_argument("query", nargs="?", help="Filter query (e.g. \"Code == '810'\")")
 
     # Add command
     add_parser = subparsers.add_parser("add", help="Add a new account")

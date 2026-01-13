@@ -72,9 +72,7 @@ def main():
         return
 
     # Create the token object first
-    oauth2_token = OAuth2Token(
-        client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"]
-    )
+    oauth2_token = OAuth2Token(client_id=config["CLIENT_ID"], client_secret=config["CLIENT_SECRET"])
     oauth2_token.update_token(**token_data)
 
     api_client = ApiClient(
