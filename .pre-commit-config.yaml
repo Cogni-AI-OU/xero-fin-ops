@@ -87,6 +87,8 @@ repos:
     hooks:
       - id: markdown-link-check
         args:
+          - --config
+          - .markdown-link-check.json
           - --quiet
   - repo: https://github.com/Yelp/detect-secrets
     rev: v1.5.0

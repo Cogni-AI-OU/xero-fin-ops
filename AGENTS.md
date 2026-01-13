@@ -13,8 +13,6 @@ Guidance for coding agents working in this repository.
 For detailed coding standards and formatting guidelines, refer to:
 
 - [Copilot Instructions](.github/copilot-instructions.md) - Main coding standards
-- [Ansible](.github/instructions/ansible.instructions.md) - Ansible conventions
-- [JSON](.github/instructions/json.instructions.md) - JSON formatting standards
 - [Markdown](.github/instructions/markdown.instructions.md) - Markdown standards
 - [YAML](.github/instructions/yaml.instructions.md) - YAML formatting standards
 
