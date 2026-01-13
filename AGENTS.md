@@ -91,22 +91,9 @@ on top of the updated target branch:
 - **Always** verify with `git diff` that only your changes remain
 - **Use** `GIT_EDITOR=true` for non-interactive cherry-pick operations
 
-### Testing Xero Scripts
+### Using `report_progress` Tool
 
-```bash
-# Test individual scripts
-cd scripts/
-./xero_journal_manager.py --help
-./xero_coa_manager.py --help
-./xero_pnl_report.py --help
-
-# Ensure scripts are executable
-chmod +x scripts/*.py
-```
-
-### Critical: Using `report_progress` Tool
-
-**CRITICAL WARNING**: The `report_progress` tool automatically rebases your branch against the remote
+**WARNING**: The `report_progress` tool automatically rebases your branch against the remote
 tracking branch. This **WILL CRASH** the session if your local history has diverged from remote.
 
 **When Crash Occurs:**
@@ -130,27 +117,6 @@ tries to auto-rebase (e.g., 113 commits), it encounters conflicts it cannot reso
 **For complete details**, see:
 [`.github/skills/git/SKILL.md` - "Working with Automation Tools"](.github/skills/git/SKILL.md#working-with-automation-tools)
 
-### Environment Setup
-
-```bash
-# Install dependencies
-pip install -r .devcontainer/requirements.txt
-
-# Install pre-commit hooks
-pre-commit install
-
-# Set up environment variables (copy from .env.example)
-cp .env.example .env
-# Edit .env with your FreeAgent OAuth credentials
-```
-
-## Configuration
-
-- **Environment Variables**: All configuration is via `FREEAGENT_*` environment variables
-- **OAuth2 Flow**: Uses authorization code flow with token refresh
-- **Output Formats**: Supports plain, csv, json, and yaml output formats
-- **Pagination**: Built-in pagination support with configurable page size
-
 ## References
 
 - Claude-specific guidance: [CLAUDE.md](CLAUDE.md)
@@ -169,7 +135,7 @@ cp .env.example .env
 
 If you encounter firewall issues when using the GitHub Copilot Agent:
 
-- Refer to <https://gh.io/copilot/firewall-config> for configuration details.
+- Refer to the [firewall configuration guide][firewall-guide] for details.
 - If you need to allowlist additional hosts, update your firewall configuration accordingly
   and keep the list of allowed hosts in `.github/agents/FIREWALL.md` up to date.
 
@@ -181,6 +147,6 @@ If Copilot or automated checks behave unexpectedly:
 - Verify `.markdownlint.yaml` and `.yamllint` have not been modified incorrectly.
 - If problems persist, open an issue with details of the command run and any error output.
 
-### Project-specific issues
+<!-- Named links -->
 
-TBC
+[firewall-guide]: https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-firewall
