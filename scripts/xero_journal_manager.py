@@ -245,6 +245,38 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         sys.exit(1)
 
 
+def post_journal(api_client, tenant_id, journal_id):
+    accounting_api = AccountingApi(api_client)
+
+    try:
+        print(f"Fetching journal {journal_id}...", file=sys.stderr)
+        journal_response = accounting_api.get_manual_journal(tenant_id, journal_id)
+
+        if not journal_response.manual_journals:
+            print(f"Journal {journal_id} not found.", file=sys.stderr)
+            return
+
+        journal = journal_response.manual_journals[0]
+
+        if journal.status != "DRAFT":
+            print(f"Journal {journal_id} is not a draft (status: {journal.status}). Cannot post.", file=sys.stderr)
+            return
+
+        print(f"Posting Journal: {journal.manual_journal_id} - {journal.narration}")
+        journal.status = "POSTED"
+
+        accounting_api.update_manual_journal(
+            tenant_id,
+            journal_id,
+            manual_journals=ManualJournals(manual_journals=[journal]),
+        )
+        print("Journal posted successfully.")
+
+    except Exception as e:
+        print(f"Error posting journal: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
 def resolve_tenant(api_client, tenant_id_arg=None, tenant_index=None):
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
@@ -309,6 +341,10 @@ def main():
         help="Simulate the edit without applying changes",
     )
 
+    # Post command
+    post_parser = subparsers.add_parser("post", help="Post a draft manual journal")
+    post_parser.add_argument("--journal-id", required=True, help="The ID of the journal to post")
+
     args = parser.parse_args()
 
     config = load_config()
@@ -356,6 +392,8 @@ def main():
             args.new_account,
             args.dry_run,
         )
+    elif args.command == "post":
+        post_journal(api_client, tenant_id, args.journal_id)
     else:
         parser.print_help()
 
