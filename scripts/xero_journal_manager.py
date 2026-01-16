@@ -322,7 +322,7 @@ def main():
     parser.add_argument(
         "--tenant-index",
         type=int,
-        help="1-based index of the tenant connection to use (shown by xero_tenant_manager.py view)",
+        help="1-based index of the tenant connection to use (see xero_tenant_manager.py view)",
     )
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
