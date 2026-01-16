@@ -137,7 +137,7 @@ def main():
     # Get organisation details
     orgs = accounting_api.get_organisations(tenant_id)
     for org in orgs.organisations:
-        if hasattr(org, "organisation_id") and org.organisation_id == tenant_id:
+        if hasattr(org, "organisation_id") and str(org.organisation_id) == tenant_id:
             print(f"Base Currency: {org.base_currency}", file=sys.stderr)
             break
 
