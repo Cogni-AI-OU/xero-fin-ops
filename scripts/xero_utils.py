@@ -1,15 +1,9 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#     "xero-python",
-# ]
-# ///
 """
 Shared utilities for Xero scripts.
 
 This module provides common functionality used across multiple Xero scripts.
 """
+
 import sys
 from xero_python.identity import IdentityApi
 

@@ -253,6 +253,21 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
 
 
 def post_journal(api_client, tenant_id, journal_id, dry_run=False):
+    """
+    Post a draft manual journal to change its status from DRAFT to POSTED.
+
+    Args:
+        api_client: Xero API client instance
+        tenant_id: The tenant ID to use
+        journal_id: The ID of the manual journal to post
+        dry_run: If True, simulates the post operation without making changes
+
+    Returns:
+        None
+
+    Exits:
+        If an error occurs during the posting process
+    """
     accounting_api = AccountingApi(api_client)
 
     try:
