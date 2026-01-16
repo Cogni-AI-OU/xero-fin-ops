@@ -22,6 +22,8 @@ jobs:
   claude-review:
     # See: https://docs.github.com/en/actions/how-tos/reuse-automations/reuse-workflows
     uses: Cogni-AI-OU/.github/.github/workflows/claude-review.yml@main
+    with:
+      pr_number: ${{ github.event.pull_request.number }}
     # Job-level permissions are passed to the reusable workflow
     permissions:
       actions: read
