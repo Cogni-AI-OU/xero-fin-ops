@@ -134,6 +134,13 @@ def main():
     # 2. Get Balance Sheet Report
     accounting_api = AccountingApi(api_client)
 
+    # Get organisation details
+    orgs = accounting_api.get_organisations(tenant_id)
+    for org in orgs.organisations:
+        if hasattr(org, "organisation_id") and org.organisation_id == tenant_id:
+            print(f"Base Currency: {org.base_currency}", file=sys.stderr)
+            break
+
     print(f"Fetching Balance Sheet as of {report_date}...")
 
     try:
