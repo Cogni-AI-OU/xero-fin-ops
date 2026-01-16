@@ -212,3 +212,6 @@ xero_config.yaml
 
 # Data exports
 *.csv
+
+# Downloaded tools
+actionlint

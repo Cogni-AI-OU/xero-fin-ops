@@ -245,8 +245,87 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         sys.exit(1)
 
 
+def post_journal(api_client, tenant_id, journal_id):
+    accounting_api = AccountingApi(api_client)
+
+    try:
+        print(f"Fetching journal {journal_id}...", file=sys.stderr)
+        journal_response = accounting_api.get_manual_journal(tenant_id, journal_id)
+
+        if not journal_response.manual_journals:
+            print(f"Journal {journal_id} not found.", file=sys.stderr)
+            return
+
+        journal = journal_response.manual_journals[0]
+
+        if journal.status != "DRAFT":
+            print(f"Journal {journal_id} is not a draft (status: {journal.status}). Cannot post.", file=sys.stderr)
+            return
+
+        print(f"Posting Journal: {journal.manual_journal_id} - {journal.narration}")
+        journal.status = "POSTED"
+
+        accounting_api.update_manual_journal(
+            tenant_id,
+            journal_id,
+            manual_journals=ManualJournals(manual_journals=[journal]),
+        )
+        print("Journal posted successfully.")
+
+    except Exception as e:
+        print(f"Error posting journal: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def resolve_tenant(api_client, tenant_id_arg=None, tenant_index=None):
+    identity_api = IdentityApi(api_client)
+    connections = identity_api.get_connections()
+
+    if not connections:
+        print("No connections found.", file=sys.stderr)
+        sys.exit(1)
+
+    if tenant_id_arg:
+        for conn in connections:
+            if getattr(conn, "tenant_id", None) == tenant_id_arg:
+                print(
+                    f"Using Tenant: {getattr(conn, 'tenant_name', tenant_id_arg)} ({tenant_id_arg})",
+                    file=sys.stderr,
+                )
+                return tenant_id_arg
+        print(f"Tenant ID {tenant_id_arg} not found among connections.", file=sys.stderr)
+        sys.exit(1)
+
+    if tenant_index:
+        idx = tenant_index - 1
+        if idx < 0 or idx >= len(connections):
+            print(f"Tenant index {tenant_index} is out of range (1-{len(connections)}).", file=sys.stderr)
+            sys.exit(1)
+        chosen = connections[idx]
+        print(
+            f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+            file=sys.stderr,
+        )
+        return chosen.tenant_id
+
+    chosen = connections[0]
+    tenant_id = getattr(chosen, "tenant_id", "")
+    tenant_name = getattr(chosen, "tenant_name", "")
+    print(
+        f"Using Tenant: {tenant_name} ({tenant_id})",
+        file=sys.stderr,
+    )
+    return tenant_id or chosen.tenant_id
+
+
 def main():
     parser = argparse.ArgumentParser(description="Manage Xero Manual Journals")
+    parser.add_argument("--tenant-id", help="Tenant ID to use (defaults to the first connection)")
+    parser.add_argument(
+        "--tenant-index",
+        type=int,
+        help="1-based index of the tenant connection to use (see xero_tenant_manager.py view)",
+    )
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
@@ -263,6 +342,10 @@ def main():
         action="store_true",
         help="Simulate the edit without applying changes",
     )
+
+    # Post command
+    post_parser = subparsers.add_parser("post", help="Post a draft manual journal")
+    post_parser.add_argument("--journal-id", required=True, help="The ID of the journal to post")
 
     args = parser.parse_args()
 
@@ -298,15 +381,7 @@ def main():
     except Exception as e:
         print(f"Warning: Token refresh failed: {e}", file=sys.stderr)
 
-    # 1. Get Tenant ID
-    identity_api = IdentityApi(api_client)
-    connections = identity_api.get_connections()
-
-    if not connections:
-        print("No connections found.")
-        return
-
-    tenant_id = connections[0].tenant_id
+    tenant_id = resolve_tenant(api_client, args.tenant_id, args.tenant_index)
 
     if args.command == "view":
         list_journals(api_client, tenant_id, args.query)
@@ -319,6 +394,8 @@ def main():
             args.new_account,
             args.dry_run,
         )
+    elif args.command == "post":
+        post_journal(api_client, tenant_id, args.journal_id)
     else:
         parser.print_help()
 

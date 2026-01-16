@@ -10,5 +10,9 @@
     },
     "code-runner.runInTerminal": true,
     "code-runner.saveFileBeforeRun": true,
-    "code-runner.fileDirectoryAsCwd": true
+    "code-runner.fileDirectoryAsCwd": true,
+    "chat.tools.terminal.autoApprove": {
+        "./scripts/xero_coa_manager.py": true,
+        "./scripts/xero_journal_manager.py": true
+    }
 }
