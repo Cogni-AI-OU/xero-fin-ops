@@ -309,11 +309,13 @@ def resolve_tenant(api_client, tenant_id_arg=None, tenant_index=None):
         return chosen.tenant_id
 
     chosen = connections[0]
+    tenant_id = getattr(chosen, "tenant_id", "")
+    tenant_name = getattr(chosen, "tenant_name", "")
     print(
-        f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+        f"Using Tenant: {tenant_name} ({tenant_id})",
         file=sys.stderr,
     )
-    return chosen.tenant_id
+    return tenant_id or chosen.tenant_id
 
 
 def main():
