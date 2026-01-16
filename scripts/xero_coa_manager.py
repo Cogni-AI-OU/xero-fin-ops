@@ -104,13 +104,42 @@ def get_api_client():
     return api_client
 
 
-def get_tenant_id(api_client):
+def get_tenant_id(api_client, tenant_id_arg=None, tenant_index=None):
     identity_api = IdentityApi(api_client)
     connections = identity_api.get_connections()
     if not connections:
-        print("No Xero connections found.")
+        print("No Xero connections found.", file=sys.stderr)
         sys.exit(1)
-    return connections[0].tenant_id
+
+    if tenant_id_arg:
+        for conn in connections:
+            if getattr(conn, "tenant_id", None) == tenant_id_arg:
+                print(
+                    f"Using Tenant: {getattr(conn, 'tenant_name', tenant_id_arg)} ({tenant_id_arg})",
+                    file=sys.stderr,
+                )
+                return tenant_id_arg
+        print(f"Tenant ID {tenant_id_arg} not found among connections.", file=sys.stderr)
+        sys.exit(1)
+
+    if tenant_index:
+        idx = tenant_index - 1
+        if idx < 0 or idx >= len(connections):
+            print(f"Tenant index {tenant_index} is out of range (1-{len(connections)}).", file=sys.stderr)
+            sys.exit(1)
+        chosen = connections[idx]
+        print(
+            f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+            file=sys.stderr,
+        )
+        return chosen.tenant_id
+
+    chosen = connections[0]
+    print(
+        f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+        file=sys.stderr,
+    )
+    return chosen.tenant_id
 
 
 def list_accounts(api_client, tenant_id, query=None):
@@ -205,6 +234,12 @@ def add_account(api_client, tenant_id, code, name, account_type, description=Non
 
 def main():
     parser = argparse.ArgumentParser(description="Manage Xero Chart of Accounts")
+    parser.add_argument("--tenant-id", help="Tenant ID to use (defaults to the first connection)")
+    parser.add_argument(
+        "--tenant-index",
+        type=int,
+        help="1-based index of the tenant connection to use (see xero_tenant_manager.py view)",
+    )
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
@@ -227,11 +262,11 @@ def main():
 
     if args.command == "view":
         api_client = get_api_client()
-        tenant_id = get_tenant_id(api_client)
+        tenant_id = get_tenant_id(api_client, args.tenant_id, args.tenant_index)
         list_accounts(api_client, tenant_id, args.query)
     elif args.command == "add":
         api_client = get_api_client()
-        tenant_id = get_tenant_id(api_client)
+        tenant_id = get_tenant_id(api_client, args.tenant_id, args.tenant_index)
         add_account(
             api_client,
             tenant_id,

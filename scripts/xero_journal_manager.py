@@ -245,8 +245,53 @@ def edit_journal(api_client, tenant_id, journal_id, find_account, new_account, d
         sys.exit(1)
 
 
+def resolve_tenant(api_client, tenant_id_arg=None, tenant_index=None):
+    identity_api = IdentityApi(api_client)
+    connections = identity_api.get_connections()
+
+    if not connections:
+        print("No connections found.", file=sys.stderr)
+        sys.exit(1)
+
+    if tenant_id_arg:
+        for conn in connections:
+            if getattr(conn, "tenant_id", None) == tenant_id_arg:
+                print(
+                    f"Using Tenant: {getattr(conn, 'tenant_name', tenant_id_arg)} ({tenant_id_arg})",
+                    file=sys.stderr,
+                )
+                return tenant_id_arg
+        print(f"Tenant ID {tenant_id_arg} not found among connections.", file=sys.stderr)
+        sys.exit(1)
+
+    if tenant_index:
+        idx = tenant_index - 1
+        if idx < 0 or idx >= len(connections):
+            print(f"Tenant index {tenant_index} is out of range (1-{len(connections)}).", file=sys.stderr)
+            sys.exit(1)
+        chosen = connections[idx]
+        print(
+            f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+            file=sys.stderr,
+        )
+        return chosen.tenant_id
+
+    chosen = connections[0]
+    print(
+        f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
+        file=sys.stderr,
+    )
+    return chosen.tenant_id
+
+
 def main():
     parser = argparse.ArgumentParser(description="Manage Xero Manual Journals")
+    parser.add_argument("--tenant-id", help="Tenant ID to use (defaults to the first connection)")
+    parser.add_argument(
+        "--tenant-index",
+        type=int,
+        help="1-based index of the tenant connection to use (shown by xero_tenant_manager.py view)",
+    )
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # View command
@@ -298,15 +343,7 @@ def main():
     except Exception as e:
         print(f"Warning: Token refresh failed: {e}", file=sys.stderr)
 
-    # 1. Get Tenant ID
-    identity_api = IdentityApi(api_client)
-    connections = identity_api.get_connections()
-
-    if not connections:
-        print("No connections found.")
-        return
-
-    tenant_id = connections[0].tenant_id
+    tenant_id = resolve_tenant(api_client, args.tenant_id, args.tenant_index)
 
     if args.command == "view":
         list_journals(api_client, tenant_id, args.query)
