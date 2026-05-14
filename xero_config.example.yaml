@@ -2,4 +2,4 @@
 CLIENT_ID: YOUR_CLIENT_ID_HERE
 CLIENT_SECRET: YOUR_CLIENT_SECRET_HERE  # pragma: allowlist secret
 REDIRECT_URI: http://localhost:8888/callback
-SCOPE: offline_access accounting.transactions accounting.settings
+SCOPE: offline_access accounting.transactions accounting.settings accounting.reports.read
