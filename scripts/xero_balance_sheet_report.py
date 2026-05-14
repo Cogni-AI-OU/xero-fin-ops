@@ -30,8 +30,8 @@ from datetime import date, datetime
 from xero_python.api_client import ApiClient
 from xero_python.api_client.configuration import Configuration
 from xero_python.api_client.oauth2 import OAuth2Token
-from xero_python.identity import IdentityApi
 from xero_python.accounting import AccountingApi
+from xero_utils import resolve_tenant
 
 
 def load_config(config_file="xero_config.yaml"):
@@ -45,45 +45,6 @@ def load_token(token_file=".xero_token.json"):
         return None
     with open(token_file, "r") as f:
         return json.load(f)
-
-
-def resolve_tenant(api_client, tenant_id_arg=None, tenant_index=None):
-    identity_api = IdentityApi(api_client)
-    connections = identity_api.get_connections()
-
-    if not connections:
-        print("No connections found.", file=sys.stderr)
-        sys.exit(1)
-
-    if tenant_id_arg:
-        for conn in connections:
-            if getattr(conn, "tenant_id", None) == tenant_id_arg:
-                print(
-                    f"Using Tenant: {getattr(conn, 'tenant_name', tenant_id_arg)} ({tenant_id_arg})",
-                    file=sys.stderr,
-                )
-                return tenant_id_arg
-        print(f"Tenant ID {tenant_id_arg} not found among connections.", file=sys.stderr)
-        sys.exit(1)
-
-    if tenant_index:
-        idx = tenant_index - 1
-        if idx < 0 or idx >= len(connections):
-            print(f"Tenant index {tenant_index} is out of range (1-{len(connections)}).", file=sys.stderr)
-            sys.exit(1)
-        chosen = connections[idx]
-        print(
-            f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
-            file=sys.stderr,
-        )
-        return chosen.tenant_id
-
-    chosen = connections[0]
-    print(
-        f"Using Tenant: {getattr(chosen, 'tenant_name', '')} ({getattr(chosen, 'tenant_id', '')})",
-        file=sys.stderr,
-    )
-    return chosen.tenant_id
 
 
 def main():
