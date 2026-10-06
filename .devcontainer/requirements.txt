@@ -8,6 +8,7 @@ docker>=7.1
 jinja2-cli
 molecule
 molecule-docker
+pandas
 pipenv
 pre-commit
 requests==2.31.0
